@@ -37,11 +37,11 @@
     "type": "module",
     "scripts": {
         "watch:all": "run-p -n rollup:watch sass:watch postcss:watch",
-        "sass": "sass --embed-sources --load-path=node_modules ./src/sass/index.scss:./tmp/bundle.css",
+        "sass": "sass --embed-sources --load-path=node_modules ./src/scss/index.scss:./tmp/bundle.css",
         "postcss": "postcss tmp/bundle.css --verbose --map --output public/assets/bundle.css",
         "minify": "postcss tmp/bundle.css --output public/assets/bundle.min.css --verbose --no-map --env production",
         "rollup": "rollup -c",
-        "sass:watch": "sass --embed-sources --load-path=node_modules --watch ./src/sass/index.scss:./tmp/bundle.css",
+        "sass:watch": "sass --embed-sources --load-path=node_modules --watch ./src/scss/index.scss:./tmp/bundle.css",
         "postcss:watch": "postcss tmp/bundle.css --map --watch --output public/assets/bundle.css",
         "rollup:watch": "rollup -c -w",
         "serve": "node ./express.config.cjs"
