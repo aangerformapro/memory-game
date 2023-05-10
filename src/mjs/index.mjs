@@ -1,17 +1,23 @@
-import { Chronometer, formatTime } from "./components/timer.mjs";
+import { Chronometer, TimeStamp, Timer, formatTime } from "./components/timer.mjs";
 
 
 
 
 
-
-const chrono = new Chronometer();
-
-
-console.log(chrono);
+const timer = new Timer(2000);
 
 
+timer.on('tick', e => {
 
-setInterval(() => {
-    formatTime(chrono.lap().elapsed);
-}, 20);
+    const { chrono } = e.data;
+
+
+    console.debug((new TimeStamp(chrono.elapsed)).toString());
+
+});
+timer.on('ended', e => {
+    alert('GAME OVER');
+});
+
+
+timer.start();
