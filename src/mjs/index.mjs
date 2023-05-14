@@ -1,23 +1,28 @@
+import Deck from "./components/deck.mjs";
 import { Chronometer, TimeStamp, Timer, formatTime } from "./components/timer.mjs";
 
 
 
 
 
-const timer = new Timer(2000);
+// const timer = new Timer(2000);
 
 
-timer.on('tick', e => {
+// timer.on('tick', e => {
 
-    const { chrono } = e.data;
-
-
-    console.debug((new TimeStamp(chrono.elapsed)).toString());
-
-});
-timer.on('ended', e => {
-    alert('GAME OVER');
-});
+//     const { chrono } = e.data;
 
 
-timer.start();
+//     console.debug((new TimeStamp(chrono.elapsed)).toString());
+
+// });
+// timer.on('ended', e => {
+//     alert('GAME OVER');
+// });
+
+
+//timer.start();
+
+let deck = Deck.generate(15);
+
+console.debug(deck);

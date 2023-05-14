@@ -290,7 +290,7 @@ export class Icon {
     }
 
 
-    constructor(root, label) {
+    constructor(label) {
 
         if (!isString(label)) {
             throw new TypeError('name must be a String');
@@ -300,13 +300,9 @@ export class Icon {
             throw new Error('Invalid label ' + label);
         }
 
-        if (root instanceof Element === false) {
-            throw new TypeError('root must be an Element');
-        }
 
         this.#label = label;
         this.#elem = createElement('i', { class: icons[label] + ' font-face' });
-        root.appendChild(this.#elem);
 
     }
 

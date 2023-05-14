@@ -1,3 +1,4 @@
+import dataset from "../helpers/dataset.mjs";
 import EventManager from "../helpers/event-manager.mjs";
 import { createElement, isInt, isString } from "../helpers/utils.mjs";
 import Icon from "./icon.mjs";
@@ -43,13 +44,22 @@ export class Card {
     }
 
 
-    constructor(root, index, icon) {
+    get order() {
+        return dataset(this.#elem, 'order') ?? 0;
+    }
 
 
-        if (root instanceof Element === false) {
-            throw new TypeError('root must be an Element');
+    set order(num) {
+
+        if (!isInt(num)) {
+            throw new TypeError('num must be an integer');
         }
 
+        dataset(this.#elem, 'order', num);
+
+    }
+
+    constructor(index, icon) {
 
         if (!isInt(index)) {
             throw new TypeError('name must be an integer');
@@ -67,7 +77,8 @@ export class Card {
         this.#index = index;
         this.#elem = createElement('div', {
             class: 'memory-card',
-            'data-index': index
+            'data-index': index,
+            'data-order': index
         }, [
             icon.element,
             createElement('div', { class: 'back-face' }),
@@ -82,21 +93,25 @@ export class Card {
 
 
         this.#elem.addEventListener('click', e => {
-
-            if (!this.flipped) {
-                this.#elem.classList.add('flip');
-            } else {
-                this.#elem.classList.remove('flip');
-            }
-
-
-            this.trigger('flipped', {
-                card: this
-            })
-
+            this.toggle();
         });
     }
 
+
+
+    toggle() {
+        if (!this.flipped) {
+            this.#elem.classList.add('flip');
+        } else {
+            this.#elem.classList.remove('flip');
+        }
+
+
+        this.trigger('flipped', {
+            card: this,
+            flipped: this.flipped
+        });
+    }
 }
 
 

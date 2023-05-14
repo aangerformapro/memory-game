@@ -1,3 +1,30 @@
+function _iterableToArrayLimit(arr, i) {
+  var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"];
+  if (null != _i) {
+    var _s,
+      _e,
+      _x,
+      _r,
+      _arr = [],
+      _n = !0,
+      _d = !1;
+    try {
+      if (_x = (_i = _i.call(arr)).next, 0 === i) {
+        if (Object(_i) !== _i) return;
+        _n = !1;
+      } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0);
+    } catch (err) {
+      _d = !0, _e = err;
+    } finally {
+      try {
+        if (!_n && null != _i.return && (_r = _i.return(), Object(_r) !== _r)) return;
+      } finally {
+        if (_d) throw _e;
+      }
+    }
+    return _arr;
+  }
+}
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -19,6 +46,175 @@ function _createClass(Constructor, protoProps, staticProps) {
     writable: false
   });
   return Constructor;
+}
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function");
+  }
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      writable: true,
+      configurable: true
+    }
+  });
+  Object.defineProperty(subClass, "prototype", {
+    writable: false
+  });
+  if (superClass) _setPrototypeOf(subClass, superClass);
+}
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  };
+  return _setPrototypeOf(o, p);
+}
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+  try {
+    Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+function _construct(Parent, args, Class) {
+  if (_isNativeReflectConstruct()) {
+    _construct = Reflect.construct.bind();
+  } else {
+    _construct = function _construct(Parent, args, Class) {
+      var a = [null];
+      a.push.apply(a, args);
+      var Constructor = Function.bind.apply(Parent, a);
+      var instance = new Constructor();
+      if (Class) _setPrototypeOf(instance, Class.prototype);
+      return instance;
+    };
+  }
+  return _construct.apply(null, arguments);
+}
+function _isNativeFunction(fn) {
+  return Function.toString.call(fn).indexOf("[native code]") !== -1;
+}
+function _wrapNativeSuper(Class) {
+  var _cache = typeof Map === "function" ? new Map() : undefined;
+  _wrapNativeSuper = function _wrapNativeSuper(Class) {
+    if (Class === null || !_isNativeFunction(Class)) return Class;
+    if (typeof Class !== "function") {
+      throw new TypeError("Super expression must either be null or a function");
+    }
+    if (typeof _cache !== "undefined") {
+      if (_cache.has(Class)) return _cache.get(Class);
+      _cache.set(Class, Wrapper);
+    }
+    function Wrapper() {
+      return _construct(Class, arguments, _getPrototypeOf(this).constructor);
+    }
+    Wrapper.prototype = Object.create(Class.prototype, {
+      constructor: {
+        value: Wrapper,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+    return _setPrototypeOf(Wrapper, Class);
+  };
+  return _wrapNativeSuper(Class);
+}
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+  return self;
+}
+function _possibleConstructorReturn(self, call) {
+  if (call && (typeof call === "object" || typeof call === "function")) {
+    return call;
+  } else if (call !== void 0) {
+    throw new TypeError("Derived constructors may only return object or undefined");
+  }
+  return _assertThisInitialized(self);
+}
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+      result;
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+    return _possibleConstructorReturn(this, result);
+  };
+}
+function _superPropBase(object, property) {
+  while (!Object.prototype.hasOwnProperty.call(object, property)) {
+    object = _getPrototypeOf(object);
+    if (object === null) break;
+  }
+  return object;
+}
+function _get() {
+  if (typeof Reflect !== "undefined" && Reflect.get) {
+    _get = Reflect.get.bind();
+  } else {
+    _get = function _get(target, property, receiver) {
+      var base = _superPropBase(target, property);
+      if (!base) return;
+      var desc = Object.getOwnPropertyDescriptor(base, property);
+      if (desc.get) {
+        return desc.get.call(arguments.length < 3 ? target : receiver);
+      }
+      return desc.value;
+    };
+  }
+  return _get.apply(this, arguments);
+}
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
+}
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+}
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+function _iterableToArray(iter) {
+  if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter);
+}
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+  return arr2;
+}
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 function _toPrimitive(input, hint) {
   if (typeof input !== "object" || input === null) return input;
@@ -99,13 +295,32 @@ function _classPrivateFieldInitSpec(obj, privateMap, value) {
 /* global unsafeWindow, globalThis */
 
 var global = typeof unsafeWindow !== 'undefined' ? unsafeWindow : typeof globalThis !== 'undefined' ? globalThis : window;
-global.document;
+var document$1 = global.document;
   global.JSON;
-var isString = function isString(param) {
+var RE_NUMERIC = /^-?(?:[\d]+\.)?\d+$/;
+var isPlainObject = function isPlainObject(param) {
+    return param instanceof Object && Object.getPrototypeOf(param) === Object.prototype;
+  },
+  isUndef = function isUndef(param) {
+    return typeof param === 'undefined';
+  },
+  isString = function isString(param) {
     return typeof param === 'string';
+  },
+  isNumber = function isNumber(param) {
+    return typeof param === 'number';
   },
   isInt = function isInt(param) {
     return Number.isInteger(param);
+  },
+  isFloat = function isFloat(param) {
+    return isNumber(param) && parseFloat(param) === param;
+  },
+  isNumeric = function isNumeric(param) {
+    return isInt(param) || isFloat(param) || RE_NUMERIC.test(param);
+  },
+  isNull = function isNull(param) {
+    return param === null;
   },
   isCallable = function isCallable(param) {
     return typeof param === 'function';
@@ -120,6 +335,71 @@ function runAsync(callback) {
       callback.apply(void 0, args);
     }, 0);
   }
+}
+function toDashed$1(name) {
+  return name.replace(/([A-Z])/g, function (u) {
+    return "-" + u.toLowerCase();
+  });
+}
+
+/**
+ * Creates an Element
+ *
+ * @param {string} tagName
+ * @param {Object} [params]
+ * @param {string|HTMLElement|string[]|HTMLElement[]} [html]
+ * @returns {HTMLElement}
+ */
+function createElement(tag) {
+  var _params, _html;
+  var params = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+  var html = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+  if (typeof tag !== 'string') {
+    throw new TypeError('tag must be a String');
+  }
+  if (typeof params === 'string' || params instanceof Element || params instanceof NodeList || Array.isArray(params)) {
+    html = params;
+    params = {};
+  }
+  (_params = params) !== null && _params !== void 0 ? _params : params = {};
+  (_html = html) !== null && _html !== void 0 ? _html : html = '';
+  var elem = document$1.createElement(tag);
+  for (var attr in params) {
+    var value = params[attr];
+    if (attr === 'html') {
+      html = value;
+      continue;
+    }
+    if (/^data(set)?$/.test(attr) && isPlainObject(value)) {
+      for (var key in value) {
+        elem.dataset[key] = value[key];
+      }
+      continue;
+    } else if (/^data(-)?\w/.test(attr)) {
+      elem.setAttribute(toDashed$1(attr), value);
+      continue;
+    }
+    if (typeof value === 'string') {
+      elem.setAttribute(attr, value);
+    } else {
+      elem[attr] = value;
+    }
+  }
+  if (html instanceof Element) {
+    html = [html];
+  }
+  if (Array.isArray(html) || html instanceof NodeList) {
+    html.forEach(function (item) {
+      if (item instanceof Element) {
+        elem.appendChild(item);
+      } else if (typeof item === 'string') {
+        elem.innerHTML += item;
+      }
+    });
+  } else if (typeof html === 'string') {
+    elem.innerHTML = html;
+  }
+  return elem;
 }
 
 var _listeners = /*#__PURE__*/new WeakMap();
@@ -303,342 +583,693 @@ var _events = {
   value: void 0
 };
 
-var MILLISECOND = 1,
-  SECOND = 1000,
-  MINUTE = 60000,
-  HOUR = 3600000;
-function computeTime(start) {
-  var elapsed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-  return +new Date() - start + elapsed;
+var _ref = typeof globalThis !== 'undefined' ? globalThis : window,
+  JSON = _ref.JSON;
+var api;
+if (typeof document !== "undefined" && document.head && document.head.dataset) {
+  api = {
+    set: function set(node, attr, value) {
+      if (isUndef(value) || isNull(value)) {
+        return this.remove(node, attr);
+      }
+      node.dataset[attr] = encode(value);
+    },
+    get: function get(node, attr) {
+      return decode(node.dataset[attr]);
+    },
+    remove: function remove(node, attr) {
+      delete node.dataset[attr];
+    }
+  };
+} else {
+  api = {
+    set: function set(node, attr, value) {
+      if (isUndef(value) || isNull(value)) {
+        return this.remove(node, attr);
+      }
+      node.setAttribute('data-' + toDashed(attr), encode(value));
+    },
+    get: function get(node, attr) {
+      return decode(node.getAttribute('data-' + toDashed(attr)));
+    },
+    remove: function remove(node, attr) {
+      node.removeAttribute('data-' + toDashed(attr));
+    }
+  };
 }
-var _ms = /*#__PURE__*/new WeakMap();
-var TimeStamp = /*#__PURE__*/function () {
-  function TimeStamp(ms) {
-    _classCallCheck(this, TimeStamp);
-    _classPrivateFieldInitSpec(this, _ms, {
-      writable: true,
-      value: void 0
-    });
-    if (!isInt(ms)) {
-      throw new TypeError('ms must be an integer');
-    }
-    _classPrivateFieldSet(this, _ms, ms);
-  }
-  _createClass(TimeStamp, [{
-    key: "hours",
-    get: function get() {
-      return Math.floor(_classPrivateFieldGet(this, _ms) / HOUR);
-    }
-  }, {
-    key: "minutes",
-    get: function get() {
-      return Math.floor(_classPrivateFieldGet(this, _ms) / MINUTE);
-    }
-  }, {
-    key: "seconds",
-    get: function get() {
-      return Math.floor(_classPrivateFieldGet(this, _ms) / SECOND);
-    }
-  }, {
-    key: "miliseconds",
-    get: function get() {
-      return _classPrivateFieldGet(this, _ms);
-    }
-  }, {
-    key: "export",
-    value: function _export() {
-      var values = {
-          hours: HOUR,
-          minutes: MINUTE,
-          seconds: SECOND,
-          miliseconds: MILLISECOND
-        },
-        remaining = _classPrivateFieldGet(this, _ms),
-        result = {};
-      for (var key in values) {
-        var divider = values[key],
-          floor = Math.floor(remaining / divider);
-        remaining -= floor * divider;
-        result[key] = floor;
-      }
-      return result;
-    }
-  }, {
-    key: "toString",
-    value: function toString() {
-      return formatTime(_classPrivateFieldGet(this, _ms));
-    }
-  }]);
-  return TimeStamp;
-}();
-var _startTime = /*#__PURE__*/new WeakMap();
-var _running = /*#__PURE__*/new WeakMap();
-var _paused = /*#__PURE__*/new WeakMap();
-var _elapsedTime = /*#__PURE__*/new WeakMap();
-var _laps = /*#__PURE__*/new WeakMap();
-var Chronometer = /*#__PURE__*/function () {
-  function Chronometer() {
-    var autostart = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-    _classCallCheck(this, Chronometer);
-    _classPrivateFieldInitSpec(this, _startTime, {
-      writable: true,
-      value: 0
-    });
-    _classPrivateFieldInitSpec(this, _running, {
-      writable: true,
-      value: false
-    });
-    _classPrivateFieldInitSpec(this, _paused, {
-      writable: true,
-      value: false
-    });
-    _classPrivateFieldInitSpec(this, _elapsedTime, {
-      writable: true,
-      value: 0
-    });
-    _classPrivateFieldInitSpec(this, _laps, {
-      writable: true,
-      value: []
-    });
-    if (autostart) {
-      this.start();
-    }
-  }
-  _createClass(Chronometer, [{
-    key: "start",
-    value: function start() {
-      if (!_classPrivateFieldGet(this, _running)) {
-        _classPrivateFieldSet(this, _running, true);
-        _classPrivateFieldSet(this, _laps, []);
-        _classPrivateFieldSet(this, _elapsedTime, 0);
-        _classPrivateFieldSet(this, _startTime, +new Date());
-      }
-    }
-  }, {
-    key: "stop",
-    value: function stop() {
-      if (!_classPrivateFieldGet(this, _running)) {
-        var _classPrivateFieldGet2;
-        return (_classPrivateFieldGet2 = _classPrivateFieldGet(this, _elapsedTime)) !== null && _classPrivateFieldGet2 !== void 0 ? _classPrivateFieldGet2 : 0;
-      }
-      _classPrivateFieldSet(this, _running, false);
-      return _classPrivateFieldSet(this, _elapsedTime, computeTime(_classPrivateFieldGet(this, _startTime)));
-    }
-  }, {
-    key: "pause",
-    value: function pause() {
-      _classPrivateFieldSet(this, _paused, true);
-      if (!_classPrivateFieldGet(this, _running)) {
-        return _classPrivateFieldGet(this, _elapsedTime);
-      }
-      return this.stop();
-    }
-  }, {
-    key: "resume",
-    value: function resume() {
-      if (!_classPrivateFieldGet(this, _paused)) {
-        return;
-      }
-      _classPrivateFieldSet(this, _paused, false);
-      _classPrivateFieldSet(this, _startTime, computeTime(_classPrivateFieldGet(this, _elapsedTime)));
-      _classPrivateFieldSet(this, _running, true);
-    }
-  }, {
-    key: "lap",
-    value: function lap() {
-      var _classPrivateFieldGet3, _classPrivateFieldGet4;
-      if (!this.isStarted()) {
-        return _classPrivateFieldGet(this, _laps)[_classPrivateFieldGet(this, _laps).length - 1];
-      }
-      var prev = (_classPrivateFieldGet3 = (_classPrivateFieldGet4 = _classPrivateFieldGet(this, _laps)[_classPrivateFieldGet(this, _laps).length - 1]) === null || _classPrivateFieldGet4 === void 0 ? void 0 : _classPrivateFieldGet4.elapsed) !== null && _classPrivateFieldGet3 !== void 0 ? _classPrivateFieldGet3 : _classPrivateFieldGet(this, _startTime),
-        current = this.elapsed,
-        lapTime = {
-          start: _classPrivateFieldGet(this, _startTime),
-          elapsed: current,
-          time: current - prev
-        };
-      _classPrivateFieldGet(this, _laps).push(lapTime);
-      return lapTime;
-    }
-  }, {
-    key: "isStarted",
-    value: function isStarted() {
-      return _classPrivateFieldGet(this, _running);
-    }
-  }, {
-    key: "isPaused",
-    value: function isPaused() {
-      return this.isStarted() && _classPrivateFieldGet(this, _paused);
-    }
-  }, {
-    key: "elapsed",
-    get: function get() {
-      if (this.isStarted) {
-        return computeTime(_classPrivateFieldGet(this, _startTime));
-      }
-      return _classPrivateFieldGet(this, _elapsedTime);
-    }
-  }]);
-  return Chronometer;
-}();
-function formatTime(ms) {
-  var _TimeStamp$export = new TimeStamp(ms).export(),
-    hours = _TimeStamp$export.hours,
-    minutes = _TimeStamp$export.minutes,
-    seconds = _TimeStamp$export.seconds,
-    miliseconds = _TimeStamp$export.miliseconds,
-    result = '';
-  if (hours < 10) {
-    result += '0';
-  }
-  result += hours + ':';
-  if (minutes < 10) {
-    result += '0';
-  }
-  result += minutes + ':';
-  if (seconds < 10) {
-    result += '0';
-  }
-  result += seconds + ',';
-  if (miliseconds < 100) {
-    result += '0';
-  }
-  if (miliseconds < 10) {
-    result += '0';
-  }
-  result += miliseconds;
-  return result;
+function toDashed(name) {
+  return name.replace(/([A-Z])/g, function (u) {
+    return "-" + u.toLowerCase();
+  });
 }
-var _duration = /*#__PURE__*/new WeakMap();
-var _ticks = /*#__PURE__*/new WeakMap();
-var _chrono = /*#__PURE__*/new WeakMap();
-var _timeout = /*#__PURE__*/new WeakMap();
-var _interval = /*#__PURE__*/new WeakMap();
-var Timer = /*#__PURE__*/function () {
-  function Timer() {
-    var _this = this;
-    var duration = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : MINUTE;
-    var ticks = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 500;
-    _classCallCheck(this, Timer);
-    _classPrivateFieldInitSpec(this, _duration, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _ticks, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _chrono, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _timeout, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _interval, {
-      writable: true,
-      value: void 0
-    });
-    if (!isInt(duration)) {
-      throw new TypeError('duration must be an integer');
+function getElem(elem) {
+  if (isString(elem)) {
+    elem = document.querySelectorAll(elem);
+    if (elem.length === 1) {
+      elem = elem[0];
     }
-    if (!isInt(ticks)) {
-      throw new TypeError('ticks must be an integer');
-    }
-    _classPrivateFieldSet(this, _duration, duration);
-    _classPrivateFieldSet(this, _ticks, ticks);
-    _classPrivateFieldSet(this, _chrono, new Chronometer(false));
-    EventManager.mixin(this);
-    this.on('ended', function () {
-      _this.stop();
-    });
   }
-  _createClass(Timer, [{
-    key: "started",
-    get: function get() {
-      return _classPrivateFieldGet(this, _chrono).isStarted();
-    }
-  }, {
-    key: "paused",
-    get: function get() {
-      return _classPrivateFieldGet(this, _chrono).isPaused();
-    }
-  }, {
-    key: "elapsed",
-    get: function get() {
-      return _classPrivateFieldGet(this, _chrono).elapsed;
-    }
-  }, {
-    key: "start",
-    value: function start() {
-      var _this2 = this;
-      if (this.started) {
-        return;
+  return elem;
+}
+function decode(value) {
+  //unification
+  if (isUndef(value) || isNull(value) || value === '') {
+    return null;
+  }
+  if (value.startsWith('{') && value.endsWith('}') || value.startsWith('[') && value.endsWith(']') || isNumeric(value) || value === 'true' || value === 'false') {
+    return JSON.parse(value);
+  }
+  return value;
+}
+function encode(value) {
+  if (!isString(value)) {
+    return JSON.stringify(value);
+  }
+  return value;
+}
+
+/**
+ * data-attribute reader/setter
+ * @param {Node|NodeList|String} elem 
+ * @param {String} attr 
+ * @param {Any} [value]
+ */
+function dataset(elem, attr, value) {
+  elem = getElem(elem);
+  var $this = {
+    get: function get(attr) {
+      if (elem instanceof NodeList) {
+        elem = elem[0];
       }
-      _classPrivateFieldSet(this, _timeout, setTimeout(function () {
-        _this2.trigger('ended');
-      }, _classPrivateFieldGet(this, _duration)));
-      _classPrivateFieldSet(this, _interval, setInterval(function () {
-        _this2.trigger('tick', {
-          chrono: _classPrivateFieldGet(_this2, _chrono),
-          timer: _this2
+      if (elem instanceof HTMLElement) {
+        return api.get(elem, attr);
+      }
+      return null;
+    },
+    set: function set(attr, value) {
+      if (elem instanceof NodeList) {
+        elem.forEach(function (el) {
+          api.set(el, attr, value);
         });
-      }, _classPrivateFieldGet(this, _ticks)));
-      this.trigger('started');
-      _classPrivateFieldGet(this, _chrono).start();
-    }
-  }, {
-    key: "stop",
-    value: function stop() {
-      if (!this.started) {
-        return _classPrivateFieldGet(this, _chrono).stop();
+      } else if (elem instanceof HTMLElement) {
+        api.set(elem, attr, value);
       }
-      clearTimeout(_classPrivateFieldGet(this, _timeout));
-      clearInterval(_classPrivateFieldGet(this, _interval));
-      this.trigger('stopped');
-      return _classPrivateFieldGet(this, _chrono).stop();
-    }
-  }, {
-    key: "pause",
-    value: function pause() {
-      if (this.paused || !this.started) {
-        return this.elapsed;
-      }
-      clearTimeout(_classPrivateFieldGet(this, _timeout));
-      clearInterval(_classPrivateFieldGet(this, _interval));
-      this.trigger('paused');
-      return _classPrivateFieldGet(this, _chrono).pause();
-    }
-  }, {
-    key: "resume",
-    value: function resume() {
-      var _this3 = this;
-      if (!this.paused) {
-        return;
-      }
-      var timeout = _classPrivateFieldGet(this, _duration) - this.elapsed;
-      _classPrivateFieldSet(this, _interval, setInterval(function () {
-        _this3.trigger('tick', {
-          chrono: _classPrivateFieldGet(_this3, _chrono),
-          timer: _this3
+      return $this;
+    },
+    remove: function remove(attr) {
+      if (elem instanceof NodeList) {
+        elem.forEach(function (el) {
+          api.remove(el, attr);
         });
-      }, _classPrivateFieldGet(this, _ticks)));
-      _classPrivateFieldSet(this, _timeout, setTimeout(function () {
-        _this3.trigger('ended');
-      }, timeout));
+      } else if (elem instanceof HTMLElement) {
+        api.remove(elem, attr);
+      }
+      return $this;
+    }
+  };
+  switch (arguments.length) {
+    case 2:
+      return $this.get(attr);
+    case 3:
+      return $this.set(attr, value);
+  }
+  return $this;
+}
+
+var icons = {
+    adonisjs: "devicon-adonisjs-original",
+    aftereffects: "devicon-aftereffects-plain",
+    amazonwebservices: "devicon-amazonwebservices-original",
+    android: "devicon-android-plain",
+    androidstudio: "devicon-androidstudio-plain",
+    aarch64: "devicon-aarch64-plain",
+    angularjs: "devicon-angularjs-plain",
+    ansible: "devicon-ansible-plain",
+    apache: "devicon-apache-plain",
+    apachekafka: "devicon-apachekafka-original",
+    appcelerator: "devicon-appcelerator-original",
+    apple: "devicon-apple-original",
+    appwrite: "devicon-appwrite-plain",
+    arduino: "devicon-arduino-plain",
+    atom: "devicon-atom-original",
+    azure: "devicon-azure-plain",
+    babel: "devicon-babel-plain",
+    backbonejs: "devicon-backbonejs-plain",
+    bamboo: "devicon-bamboo-original",
+    bash: "devicon-bash-plain",
+    behance: "devicon-behance-plain",
+    bitbucket: "devicon-bitbucket-original",
+    bootstrap: "devicon-bootstrap-plain",
+    bulma: "devicon-bulma-plain",
+    bower: "devicon-bower-plain",
+    c: "devicon-c-plain",
+    cakephp: "devicon-cakephp-plain",
+    canva: "devicon-canva-original",
+    centos: "devicon-centos-plain",
+    ceylon: "devicon-ceylon-plain",
+    chrome: "devicon-chrome-plain",
+    circleci: "devicon-circleci-plain",
+    clojure: "devicon-clojure-plain",
+    cmake: "devicon-cmake-plain",
+    clojurescript: "devicon-clojurescript-plain",
+    codecov: "devicon-codecov-plain",
+    codeigniter: "devicon-codeigniter-plain",
+    codepen: "devicon-codepen-plain",
+    coffeescript: "devicon-coffeescript-original",
+    confluence: "devicon-confluence-original",
+    couchdb: "devicon-couchdb-plain",
+    cplusplus: "devicon-cplusplus-plain",
+    csharp: "devicon-csharp-plain",
+    css3: "devicon-css3-plain",
+    cucumber: "devicon-cucumber-plain",
+    crystal: "devicon-crystal-original",
+    d3js: "devicon-d3js-plain",
+    dart: "devicon-dart-plain",
+    debian: "devicon-debian-plain",
+    denojs: "devicon-denojs-original",
+    devicon: "devicon-devicon-plain",
+    django: "devicon-django-plain",
+    docker: "devicon-docker-plain",
+    doctrine: "devicon-doctrine-plain",
+    "dot-net": "devicon-dot-net-plain",
+    dotnetcore: "devicon-dotnetcore-plain",
+    drupal: "devicon-drupal-plain",
+    digitalocean: "devicon-digitalocean-plain",
+    discordjs: "devicon-discordjs-plain",
+    electron: "devicon-electron-original",
+    eleventy: "devicon-eleventy-plain",
+    elixir: "devicon-elixir-plain",
+    elm: "devicon-elm-plain",
+    embeddedc: "devicon-embeddedc-plain",
+    erlang: "devicon-erlang-plain",
+    eslint: "devicon-eslint-original",
+    express: "devicon-express-original",
+    facebook: "devicon-facebook-plain",
+    feathersjs: "devicon-feathersjs-original",
+    figma: "devicon-figma-plain",
+    filezilla: "devicon-filezilla-plain",
+    firebase: "devicon-firebase-plain",
+    firefox: "devicon-firefox-plain",
+    flask: "devicon-flask-original",
+    flutter: "devicon-flutter-plain",
+    foundation: "devicon-foundation-plain",
+    fsharp: "devicon-fsharp-plain",
+    gatling: "devicon-gatling-plain",
+    gatsby: "devicon-gatsby-plain",
+    rect: "devicon-rect-plain",
+    gcc: "devicon-gcc-plain",
+    gentoo: "devicon-gentoo-plain",
+    gimp: "devicon-gimp-plain",
+    git: "devicon-git-plain",
+    github: "devicon-github-original",
+    gitlab: "devicon-gitlab-plain",
+    gitter: "devicon-gitter-plain",
+    go: "devicon-go-plain",
+    google: "devicon-google-plain",
+    googlecloud: "devicon-googlecloud-plain",
+    gradle: "devicon-gradle-plain",
+    grafana: "devicon-grafana-original",
+    grails: "devicon-grails-plain",
+    graphql: "devicon-graphql-plain",
+    groovy: "devicon-groovy-plain",
+    grunt: "devicon-grunt-plain",
+    gulp: "devicon-gulp-plain",
+    godot: "devicon-godot-plain",
+    haskell: "devicon-haskell-plain",
+    handlebars: "devicon-handlebars-plain",
+    haxe: "devicon-haxe-plain",
+    heroku: "devicon-heroku-original",
+    html5: "devicon-html5-plain",
+    hugo: "devicon-hugo-plain",
+    ie10: "devicon-ie10-original",
+    ifttt: "devicon-ifttt-original",
+    illustrator: "devicon-illustrator-plain",
+    inkscape: "devicon-inkscape-plain",
+    intellij: "devicon-intellij-plain",
+    ionic: "devicon-ionic-original",
+    jamstack: "devicon-jamstack-original",
+    jasmine: "devicon-jasmine-plain",
+    java: "devicon-java-plain",
+    javascript: "devicon-javascript-plain",
+    jeet: "devicon-jeet-plain",
+    jest: "devicon-jest-plain",
+    jenkins: "devicon-jenkins-plain",
+    jetbrains: "devicon-jetbrains-plain",
+    jira: "devicon-jira-plain",
+    jquery: "devicon-jquery-plain",
+    julia: "devicon-julia-plain",
+    jupyter: "devicon-jupyter-plain",
+    kaggle: "devicon-kaggle-original",
+    karma: "devicon-karma-plain",
+    kotlin: "devicon-kotlin-plain",
+    krakenjs: "devicon-krakenjs-plain",
+    kubernetes: "devicon-kubernetes-plain",
+    labview: "devicon-labview-plain",
+    laravel: "devicon-laravel-plain",
+    latex: "devicon-latex-original",
+    linkedin: "devicon-linkedin-plain",
+    lua: "devicon-lua-plain",
+    linux: "devicon-linux-plain",
+    materialui: "devicon-materialui-plain",
+    matlab: "devicon-matlab-plain",
+    magento: "devicon-magento-original",
+    markdown: "devicon-markdown-original",
+    maya: "devicon-maya-plain",
+    meteor: "devicon-meteor-plain",
+    minitab: "devicon-minitab-plain",
+    mocha: "devicon-mocha-plain",
+    modx: "devicon-modx-plain",
+    mongodb: "devicon-mongodb-plain",
+    moodle: "devicon-moodle-plain",
+    mysql: "devicon-mysql-plain",
+    neo4j: "devicon-neo4j-plain",
+    nestjs: "devicon-nestjs-plain",
+    networkx: "devicon-networkx-original",
+    nextjs: "devicon-nextjs-original",
+    nginx: "devicon-nginx-original",
+    nixos: "devicon-nixos-plain",
+    nodejs: "devicon-nodejs-plain",
+    nodewebkit: "devicon-nodewebkit-plain",
+    nuget: "devicon-nuget-original",
+    numpy: "devicon-numpy-original",
+    nuxtjs: "devicon-nuxtjs-plain",
+    objectivec: "devicon-objectivec-plain",
+    opera: "devicon-opera-plain",
+    ocaml: "devicon-ocaml-plain",
+    openal: "devicon-openal-plain",
+    opengl: "devicon-opengl-plain",
+    opensuse: "devicon-opensuse-plain",
+    oracle: "devicon-oracle-original",
+    pandas: "devicon-pandas-original",
+    perl: "devicon-perl-plain",
+    phalcon: "devicon-phalcon-plain",
+    photoshop: "devicon-photoshop-plain",
+    php: "devicon-php-plain",
+    phpstorm: "devicon-phpstorm-plain",
+    podman: "devicon-podman-plain",
+    polygon: "devicon-polygon-plain",
+    postgresql: "devicon-postgresql-plain",
+    premierepro: "devicon-premierepro-plain",
+    processing: "devicon-processing-plain",
+    protractor: "devicon-protractor-plain",
+    putty: "devicon-putty-plain",
+    pycharm: "devicon-pycharm-plain",
+    python: "devicon-python-plain",
+    pytorch: "devicon-pytorch-original",
+    phoenix: "devicon-phoenix-plain",
+    qt: "devicon-qt-original",
+    r: "devicon-r-original",
+    rails: "devicon-rails-plain",
+    react: "devicon-react-original",
+    redhat: "devicon-redhat-plain",
+    redis: "devicon-redis-plain",
+    redux: "devicon-redux-original",
+    rocksdb: "devicon-rocksdb-plain",
+    ruby: "devicon-ruby-plain",
+    rubymine: "devicon-rubymine-plain",
+    rust: "devicon-rust-plain",
+    safari: "devicon-safari-plain",
+    salesforce: "devicon-salesforce-plain",
+    sdl: "devicon-sdl-plain",
+    rstudio: "devicon-rstudio-plain",
+    sass: "devicon-sass-original",
+    scala: "devicon-scala-plain",
+    selenium: "devicon-selenium-original",
+    sequelize: "devicon-sequelize-plain",
+    shopware: "devicon-shopware-original",
+    shotgrid: "devicon-shotgrid-plain",
+    slack: "devicon-slack-plain",
+    socketio: "devicon-socketio-original",
+    solidity: "devicon-solidity-plain",
+    sourcetree: "devicon-sourcetree-original",
+    spring: "devicon-spring-plain",
+    spss: "devicon-spss-plain",
+    sqlalchemy: "devicon-sqlalchemy-plain",
+    sqlite: "devicon-sqlite-plain",
+    subversion: "devicon-subversion-original",
+    microsoftsqlserver: "devicon-microsoftsqlserver-plain",
+    ssh: "devicon-ssh-original",
+    stylus: "devicon-stylus-original",
+    svelte: "devicon-svelte-plain",
+    swift: "devicon-swift-plain",
+    symfony: "devicon-symfony-original",
+    storybook: "devicon-storybook-plain",
+    tailwindcss: "devicon-tailwindcss-plain",
+    tensorflow: "devicon-tensorflow-original",
+    terraform: "devicon-terraform-plain",
+    threejs: "devicon-threejs-original",
+    tortoisegit: "devicon-tortoisegit-plain",
+    towergit: "devicon-towergit-plain",
+    travis: "devicon-travis-plain",
+    thealgorithms: "devicon-thealgorithms-plain",
+    trello: "devicon-trello-plain",
+    twitter: "devicon-twitter-original",
+    typescript: "devicon-typescript-plain",
+    typo3: "devicon-typo3-plain",
+    ubuntu: "devicon-ubuntu-plain",
+    unity: "devicon-unity-original",
+    unix: "devicon-unix-original",
+    unrealengine: "devicon-unrealengine-original",
+    uwsgi: "devicon-uwsgi-plain",
+    vagrant: "devicon-vagrant-plain",
+    vim: "devicon-vim-plain",
+    visualstudio: "devicon-visualstudio-plain",
+    vuejs: "devicon-vuejs-plain",
+    vuestorefront: "devicon-vuestorefront-plain",
+    vscode: "devicon-vscode-plain",
+    webflow: "devicon-webflow-original",
+    weblate: "devicon-weblate-plain",
+    webpack: "devicon-webpack-plain",
+    webstorm: "devicon-webstorm-plain",
+    windows8: "devicon-windows8-original",
+    woocommerce: "devicon-woocommerce-plain",
+    wordpress: "devicon-wordpress-plain",
+    xamarin: "devicon-xamarin-original",
+    xcode: "devicon-xcode-plain",
+    xd: "devicon-xd-plain",
+    yarn: "devicon-yarn-plain",
+    yii: "devicon-yii-plain",
+    yunohost: "devicon-yunohost-plain",
+    zend: "devicon-zend-plain",
+    zig: "devicon-zig-original",
+    pytest: "devicon-pytest-plain",
+    opencv: "devicon-opencv-plain",
+    fastapi: "devicon-fastapi-plain",
+    k3s: "devicon-k3s-original",
+    packer: "devicon-packer-original",
+    anaconda: "devicon-anaconda-original",
+    rspec: "devicon-rspec-original",
+    argocd: "devicon-argocd-plain",
+    prometheus: "devicon-prometheus-original",
+    blender: "devicon-blender-original",
+    dropwizard: "devicon-dropwizard-plain",
+    vuetify: "devicon-vuetify-plain",
+    fedora: "devicon-fedora-plain"
+  },
+  iconNames = Object.keys(icons);
+var _elem$2 = /*#__PURE__*/new WeakMap();
+var _label = /*#__PURE__*/new WeakMap();
+var Icon = /*#__PURE__*/function () {
+  function Icon(label) {
+    _classCallCheck(this, Icon);
+    _classPrivateFieldInitSpec(this, _elem$2, {
+      writable: true,
+      value: void 0
+    });
+    _classPrivateFieldInitSpec(this, _label, {
+      writable: true,
+      value: void 0
+    });
+    if (!isString(label)) {
+      throw new TypeError('name must be a String');
+    }
+    if (!icons[label]) {
+      throw new Error('Invalid label ' + label);
+    }
+    _classPrivateFieldSet(this, _label, label);
+    _classPrivateFieldSet(this, _elem$2, createElement('i', {
+      class: icons[label] + ' font-face'
+    }));
+  }
+  _createClass(Icon, [{
+    key: "element",
+    get: function get() {
+      return _classPrivateFieldGet(this, _elem$2);
+    }
+  }, {
+    key: "label",
+    get: function get() {
+      return _classPrivateFieldGet(this, _label);
     }
   }]);
-  return Timer;
+  return Icon;
 }();
 
-var timer = new Timer(2000);
-timer.on('tick', function (e) {
-  var chrono = e.data.chrono;
-  console.debug(new TimeStamp(chrono.elapsed).toString());
-});
-timer.on('ended', function (e) {
-  alert('GAME OVER');
-});
-timer.start();
+/**
+ * @link https://marina-ferreira.github.io/projects/js/memory-game/
+ */
+var _index = /*#__PURE__*/new WeakMap();
+var _icon = /*#__PURE__*/new WeakMap();
+var _elem$1 = /*#__PURE__*/new WeakMap();
+var Card = /*#__PURE__*/function () {
+  function Card(index, icon) {
+    var _this = this;
+    _classCallCheck(this, Card);
+    _classPrivateFieldInitSpec(this, _index, {
+      writable: true,
+      value: void 0
+    });
+    _classPrivateFieldInitSpec(this, _icon, {
+      writable: true,
+      value: void 0
+    });
+    _classPrivateFieldInitSpec(this, _elem$1, {
+      writable: true,
+      value: void 0
+    });
+    if (!isInt(index)) {
+      throw new TypeError('name must be an integer');
+    }
+    if (isString(icon)) {
+      icon = new Icon(icon);
+    }
+    if (icon instanceof Icon === false) {
+      throw new TypeError('icon must be instance of Icon');
+    }
+    _classPrivateFieldSet(this, _icon, icon);
+    _classPrivateFieldSet(this, _index, index);
+    _classPrivateFieldSet(this, _elem$1, createElement('div', {
+      class: 'memory-card',
+      'data-index': index,
+      'data-order': index
+    }, [icon.element, createElement('div', {
+      class: 'back-face'
+    })]));
+    Object.defineProperty(_classPrivateFieldGet(this, _elem$1), '_cardInstance', {
+      value: this,
+      configurable: true,
+      enumerable: false
+    });
+    EventManager.mixin(this);
+    _classPrivateFieldGet(this, _elem$1).addEventListener('click', function (e) {
+      _this.toggle();
+    });
+  }
+  _createClass(Card, [{
+    key: "element",
+    get: function get() {
+      return _classPrivateFieldGet(this, _elem$1);
+    }
+  }, {
+    key: "label",
+    get: function get() {
+      return _classPrivateFieldGet(this, _icon).label;
+    }
+  }, {
+    key: "index",
+    get: function get() {
+      return _classPrivateFieldGet(this, _index);
+    }
+  }, {
+    key: "icon",
+    get: function get() {
+      return _classPrivateFieldGet(this, _icon);
+    }
+  }, {
+    key: "flipped",
+    get: function get() {
+      return _classPrivateFieldGet(this, _elem$1).classList.contains('flip');
+    }
+  }, {
+    key: "detached",
+    get: function get() {
+      return _classPrivateFieldGet(this, _elem$1).parentElement === null;
+    }
+  }, {
+    key: "order",
+    get: function get() {
+      var _dataset;
+      return (_dataset = dataset(_classPrivateFieldGet(this, _elem$1), 'order')) !== null && _dataset !== void 0 ? _dataset : 0;
+    },
+    set: function set(num) {
+      if (!isInt(num)) {
+        throw new TypeError('num must be an integer');
+      }
+      dataset(_classPrivateFieldGet(this, _elem$1), 'order', num);
+    }
+  }, {
+    key: "toggle",
+    value: function toggle() {
+      if (!this.flipped) {
+        _classPrivateFieldGet(this, _elem$1).classList.add('flip');
+      } else {
+        _classPrivateFieldGet(this, _elem$1).classList.remove('flip');
+      }
+      this.trigger('flipped', {
+        card: this,
+        flipped: this.flipped
+      });
+    }
+  }]);
+  return Card;
+}();
+
+var _elem = /*#__PURE__*/new WeakMap();
+var _flipped = /*#__PURE__*/new WeakMap();
+var _pairs = /*#__PURE__*/new WeakMap();
+var Deck = /*#__PURE__*/function (_Array) {
+  _inherits(Deck, _Array);
+  var _super = _createSuper(Deck);
+  function Deck() {
+    var _this;
+    var cards = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+    _classCallCheck(this, Deck);
+    _this = _super.call(this);
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _elem, {
+      writable: true,
+      value: void 0
+    });
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _flipped, {
+      writable: true,
+      value: void 0
+    });
+    _classPrivateFieldInitSpec(_assertThisInitialized(_this), _pairs, {
+      writable: true,
+      value: 0
+    });
+    _classPrivateFieldSet(_assertThisInitialized(_this), _flipped, []);
+    _classPrivateFieldSet(_assertThisInitialized(_this), _pairs, 0);
+    _classPrivateFieldSet(_assertThisInitialized(_this), _elem, createElement('div', {
+      class: 'memory-game-area'
+    }));
+    EventManager.mixin(_assertThisInitialized(_this));
+    cards.forEach(function (card) {
+      return _this.push(card);
+    });
+    _this.on('flipped', function (e) {
+      var _e$data = e.data,
+        card = _e$data.card,
+        flipped = _e$data.flipped;
+      var index = _this.indexOf(card);
+      if (index !== -1) {
+        if (!flipped) {
+          _classPrivateFieldGet(_assertThisInitialized(_this), _flipped).splice(index, 1);
+        }
+        return;
+      }
+      if (flipped) {
+        _classPrivateFieldGet(_assertThisInitialized(_this), _flipped).push(card);
+        if (_classPrivateFieldGet(_assertThisInitialized(_this), _flipped).length === 2) {
+          var _classPrivateFieldGet2 = _classPrivateFieldGet(_assertThisInitialized(_this), _flipped),
+            _classPrivateFieldGet3 = _slicedToArray(_classPrivateFieldGet2, 2),
+            one = _classPrivateFieldGet3[0],
+            two = _classPrivateFieldGet3[1];
+          if (one.label === two.label) {
+            var _this$pairs;
+            _classPrivateFieldSet(_assertThisInitialized(_this), _pairs, (_this$pairs = _classPrivateFieldGet(_assertThisInitialized(_this), _pairs), _this$pairs++, _this$pairs));
+            _classPrivateFieldSet(_assertThisInitialized(_this), _flipped, []);
+            _this.trigger('success', {
+              deck: _assertThisInitialized(_this),
+              cards: [one, two]
+            });
+            if (_this.pairs === _this.max) {
+              _this.trigger('complete', {
+                deck: _assertThisInitialized(_this)
+              });
+            }
+          } else {
+            setTimeout(function () {
+              one.toggle();
+              two.toggle();
+            }, 1500);
+          }
+        }
+      }
+    });
+    return _this;
+  }
+  _createClass(Deck, [{
+    key: "element",
+    get: function get() {
+      return _classPrivateFieldGet(this, _elem);
+    }
+  }, {
+    key: "pairs",
+    get: function get() {
+      return _classPrivateFieldGet(this, _pairs);
+    }
+  }, {
+    key: "max",
+    get: function get() {
+      return Math.floor(this.length / 2);
+    }
+  }, {
+    key: "disable",
+    value: function disable() {
+      var flag = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+      _classPrivateFieldGet(this, _elem).disabled = flag === true ? true : null;
+    }
+  }, {
+    key: "push",
+    value: function push(card) {
+      var _this2 = this;
+      if (card instanceof Card) {
+        _get(_getPrototypeOf(Deck.prototype), "push", this).call(this, card);
+        _classPrivateFieldGet(this, _elem).appendChild(card.element);
+        card.on('flipped', function (e) {
+          _this2.trigger('flipped', e.data);
+        });
+      }
+      return this.length;
+    }
+  }, {
+    key: "shuffle",
+    value: function shuffle() {
+      var _this3 = this;
+      this.forEach(function (card) {
+        card.order = Math.floor(Math.random() * _this3.length);
+      });
+      return this;
+    }
+  }], [{
+    key: "generate",
+    value: function generate() {
+      var numberOfCards = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
+      if (!isInt(numberOfCards)) {
+        throw new TypeError('numberOfCards must be an integer.');
+      }
+      var cards = Math.max(4, numberOfCards + numberOfCards % 2),
+        available = _toConsumableArray(iconNames),
+        labels = new Deck();
+      for (var i = 0; i < cards / 2; i++) {
+        var rand = Math.floor(Math.random() * available.length),
+          label = available[rand];
+        available.splice(rand, 1);
+        for (var j = 1; j < 3; j++) {
+          labels.push(new Card(i * j, label));
+        }
+      }
+      return labels.shuffle();
+    }
+  }]);
+  return Deck;
+}( /*#__PURE__*/_wrapNativeSuper(Array));
+
+// const timer = new Timer(2000);
+
+// timer.on('tick', e => {
+
+//     const { chrono } = e.data;
+
+//     console.debug((new TimeStamp(chrono.elapsed)).toString());
+
+// });
+// timer.on('ended', e => {
+//     alert('GAME OVER');
+// });
+
+//timer.start();
+
+var deck = Deck.generate(15);
+console.debug(deck);
 //# sourceMappingURL=bundle.js.map
