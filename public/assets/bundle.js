@@ -297,30 +297,14 @@ function _classPrivateFieldInitSpec(obj, privateMap, value) {
 var global = typeof unsafeWindow !== 'undefined' ? unsafeWindow : typeof globalThis !== 'undefined' ? globalThis : window;
 var document$1 = global.document;
   global.JSON;
-var RE_NUMERIC = /^-?(?:[\d]+\.)?\d+$/;
 var isPlainObject = function isPlainObject(param) {
     return param instanceof Object && Object.getPrototypeOf(param) === Object.prototype;
-  },
-  isUndef = function isUndef(param) {
-    return typeof param === 'undefined';
   },
   isString = function isString(param) {
     return typeof param === 'string';
   },
-  isNumber = function isNumber(param) {
-    return typeof param === 'number';
-  },
   isInt = function isInt(param) {
     return Number.isInteger(param);
-  },
-  isFloat = function isFloat(param) {
-    return isNumber(param) && parseFloat(param) === param;
-  },
-  isNumeric = function isNumeric(param) {
-    return isInt(param) || isFloat(param) || RE_NUMERIC.test(param);
-  },
-  isNull = function isNull(param) {
-    return param === null;
   },
   isCallable = function isCallable(param) {
     return typeof param === 'function';
@@ -336,7 +320,7 @@ function runAsync(callback) {
     }, 0);
   }
 }
-function toDashed$1(name) {
+function toDashed(name) {
   return name.replace(/([A-Z])/g, function (u) {
     return "-" + u.toLowerCase();
   });
@@ -376,7 +360,7 @@ function createElement(tag) {
       }
       continue;
     } else if (/^data(-)?\w/.test(attr)) {
-      elem.setAttribute(toDashed$1(attr), value);
+      elem.setAttribute(toDashed(attr), value);
       continue;
     }
     if (typeof value === 'string') {
@@ -583,118 +567,7 @@ var _events = {
   value: void 0
 };
 
-var _ref = typeof globalThis !== 'undefined' ? globalThis : window,
-  JSON = _ref.JSON;
-var api;
-if (typeof document !== "undefined" && document.head && document.head.dataset) {
-  api = {
-    set: function set(node, attr, value) {
-      if (isUndef(value) || isNull(value)) {
-        return this.remove(node, attr);
-      }
-      node.dataset[attr] = encode(value);
-    },
-    get: function get(node, attr) {
-      return decode(node.dataset[attr]);
-    },
-    remove: function remove(node, attr) {
-      delete node.dataset[attr];
-    }
-  };
-} else {
-  api = {
-    set: function set(node, attr, value) {
-      if (isUndef(value) || isNull(value)) {
-        return this.remove(node, attr);
-      }
-      node.setAttribute('data-' + toDashed(attr), encode(value));
-    },
-    get: function get(node, attr) {
-      return decode(node.getAttribute('data-' + toDashed(attr)));
-    },
-    remove: function remove(node, attr) {
-      node.removeAttribute('data-' + toDashed(attr));
-    }
-  };
-}
-function toDashed(name) {
-  return name.replace(/([A-Z])/g, function (u) {
-    return "-" + u.toLowerCase();
-  });
-}
-function getElem(elem) {
-  if (isString(elem)) {
-    elem = document.querySelectorAll(elem);
-    if (elem.length === 1) {
-      elem = elem[0];
-    }
-  }
-  return elem;
-}
-function decode(value) {
-  //unification
-  if (isUndef(value) || isNull(value) || value === '') {
-    return null;
-  }
-  if (value.startsWith('{') && value.endsWith('}') || value.startsWith('[') && value.endsWith(']') || isNumeric(value) || value === 'true' || value === 'false') {
-    return JSON.parse(value);
-  }
-  return value;
-}
-function encode(value) {
-  if (!isString(value)) {
-    return JSON.stringify(value);
-  }
-  return value;
-}
-
-/**
- * data-attribute reader/setter
- * @param {Node|NodeList|String} elem 
- * @param {String} attr 
- * @param {Any} [value]
- */
-function dataset(elem, attr, value) {
-  elem = getElem(elem);
-  var $this = {
-    get: function get(attr) {
-      if (elem instanceof NodeList) {
-        elem = elem[0];
-      }
-      if (elem instanceof HTMLElement) {
-        return api.get(elem, attr);
-      }
-      return null;
-    },
-    set: function set(attr, value) {
-      if (elem instanceof NodeList) {
-        elem.forEach(function (el) {
-          api.set(el, attr, value);
-        });
-      } else if (elem instanceof HTMLElement) {
-        api.set(elem, attr, value);
-      }
-      return $this;
-    },
-    remove: function remove(attr) {
-      if (elem instanceof NodeList) {
-        elem.forEach(function (el) {
-          api.remove(el, attr);
-        });
-      } else if (elem instanceof HTMLElement) {
-        api.remove(elem, attr);
-      }
-      return $this;
-    }
-  };
-  switch (arguments.length) {
-    case 2:
-      return $this.get(attr);
-    case 3:
-      return $this.set(attr, value);
-  }
-  return $this;
-}
+if (typeof document !== "undefined" && document.head && document.head.dataset) ;
 
 var icons = {
     adonisjs: "devicon-adonisjs-original",
@@ -1039,10 +912,12 @@ var Card = /*#__PURE__*/function () {
     _classPrivateFieldSet(this, _icon, icon);
     _classPrivateFieldSet(this, _index, index);
     _classPrivateFieldSet(this, _elem$1, createElement('div', {
-      class: 'memory-card',
+      class: 'memory-card col-3',
       'data-index': index,
-      'data-order': index
-    }, [icon.element, createElement('div', {
+      'style': 'order: ' + index
+    }, [createElement('div', {
+      class: 'front-face'
+    }, [icon.element]), createElement('div', {
       class: 'back-face'
     })]));
     Object.defineProperty(_classPrivateFieldGet(this, _elem$1), '_cardInstance', {
@@ -1088,14 +963,14 @@ var Card = /*#__PURE__*/function () {
   }, {
     key: "order",
     get: function get() {
-      var _dataset;
-      return (_dataset = dataset(_classPrivateFieldGet(this, _elem$1), 'order')) !== null && _dataset !== void 0 ? _dataset : 0;
+      var _classPrivateFieldGet2;
+      return parseInt((_classPrivateFieldGet2 = _classPrivateFieldGet(this, _elem$1).style.order) !== null && _classPrivateFieldGet2 !== void 0 ? _classPrivateFieldGet2 : 0);
     },
     set: function set(num) {
       if (!isInt(num)) {
         throw new TypeError('num must be an integer');
       }
-      dataset(_classPrivateFieldGet(this, _elem$1), 'order', num);
+      _classPrivateFieldGet(this, _elem$1).style.order = num;
     }
   }, {
     key: "toggle",
@@ -1109,6 +984,21 @@ var Card = /*#__PURE__*/function () {
         card: this,
         flipped: this.flipped
       });
+    }
+  }, {
+    key: "disable",
+    value: function disable() {
+      var flag = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+      if (flag) {
+        _classPrivateFieldGet(this, _elem$1).classList.add('disabled');
+      } else {
+        _classPrivateFieldGet(this, _elem$1).classList.remove('disabled');
+      }
+    }
+  }, {
+    key: "disabled",
+    get: function get() {
+      return _classPrivateFieldGet(this, _elem$1).classList.contains('disabled');
     }
   }]);
   return Card;
@@ -1150,7 +1040,7 @@ var Deck = /*#__PURE__*/function (_Array) {
       var _e$data = e.data,
         card = _e$data.card,
         flipped = _e$data.flipped;
-      var index = _this.indexOf(card);
+      var index = _classPrivateFieldGet(_assertThisInitialized(_this), _flipped).indexOf(card);
       if (index !== -1) {
         if (!flipped) {
           _classPrivateFieldGet(_assertThisInitialized(_this), _flipped).splice(index, 1);
@@ -1158,8 +1048,14 @@ var Deck = /*#__PURE__*/function (_Array) {
         return;
       }
       if (flipped) {
-        _classPrivateFieldGet(_assertThisInitialized(_this), _flipped).push(card);
+        _classPrivateFieldSet(_assertThisInitialized(_this), _flipped, _toConsumableArray(_assertThisInitialized(_this)).filter(function (card) {
+          return card.flipped;
+        }).filter(function (card) {
+          return !card.disabled;
+        }));
+        console.debug(_classPrivateFieldGet(_assertThisInitialized(_this), _flipped));
         if (_classPrivateFieldGet(_assertThisInitialized(_this), _flipped).length === 2) {
+          _this.disable();
           var _classPrivateFieldGet2 = _classPrivateFieldGet(_assertThisInitialized(_this), _flipped),
             _classPrivateFieldGet3 = _slicedToArray(_classPrivateFieldGet2, 2),
             one = _classPrivateFieldGet3[0],
@@ -1168,6 +1064,8 @@ var Deck = /*#__PURE__*/function (_Array) {
             var _this$pairs;
             _classPrivateFieldSet(_assertThisInitialized(_this), _pairs, (_this$pairs = _classPrivateFieldGet(_assertThisInitialized(_this), _pairs), _this$pairs++, _this$pairs));
             _classPrivateFieldSet(_assertThisInitialized(_this), _flipped, []);
+            one.disable();
+            two.disable();
             _this.trigger('success', {
               deck: _assertThisInitialized(_this),
               cards: [one, two]
@@ -1176,15 +1074,26 @@ var Deck = /*#__PURE__*/function (_Array) {
               _this.trigger('complete', {
                 deck: _assertThisInitialized(_this)
               });
+            } else {
+              _this.disable(false);
             }
           } else {
-            setTimeout(function () {
-              one.toggle();
-              two.toggle();
-            }, 1500);
+            _classPrivateFieldSet(_assertThisInitialized(_this), _flipped, []);
+            _this.trigger('failed', {
+              deck: _assertThisInitialized(_this),
+              cards: [one, two]
+            });
           }
         }
       }
+    });
+    _this.on('failed', function (e) {
+      setTimeout(function () {
+        e.data.cards.forEach(function (card) {
+          return card.toggle();
+        });
+        _this.disable(false);
+      }, 1500);
     });
     return _this;
   }
@@ -1207,7 +1116,16 @@ var Deck = /*#__PURE__*/function (_Array) {
     key: "disable",
     value: function disable() {
       var flag = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-      _classPrivateFieldGet(this, _elem).disabled = flag === true ? true : null;
+      if (flag === true) {
+        _classPrivateFieldGet(this, _elem).classList.add('disabled');
+      } else {
+        _classPrivateFieldGet(this, _elem).classList.remove('disabled');
+      }
+    }
+  }, {
+    key: "disabled",
+    get: function get() {
+      return _classPrivateFieldGet(this, _elem).classList.contains('disabled');
     }
   }, {
     key: "push",
@@ -1255,6 +1173,8 @@ var Deck = /*#__PURE__*/function (_Array) {
   return Deck;
 }( /*#__PURE__*/_wrapNativeSuper(Array));
 
+var app = document.querySelector('#app');
+
 // const timer = new Timer(2000);
 
 // timer.on('tick', e => {
@@ -1271,5 +1191,6 @@ var Deck = /*#__PURE__*/function (_Array) {
 //timer.start();
 
 var deck = Deck.generate(15);
+app.appendChild(deck.element);
 console.debug(deck);
 //# sourceMappingURL=bundle.js.map

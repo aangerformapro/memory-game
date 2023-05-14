@@ -45,7 +45,7 @@ export class Card {
 
 
     get order() {
-        return dataset(this.#elem, 'order') ?? 0;
+        return parseInt(this.#elem.style.order ?? 0);
     }
 
 
@@ -54,9 +54,7 @@ export class Card {
         if (!isInt(num)) {
             throw new TypeError('num must be an integer');
         }
-
-        dataset(this.#elem, 'order', num);
-
+        this.#elem.style.order = num;
     }
 
     constructor(index, icon) {
@@ -76,11 +74,13 @@ export class Card {
         this.#icon = icon;
         this.#index = index;
         this.#elem = createElement('div', {
-            class: 'memory-card',
+            class: 'memory-card col-3',
             'data-index': index,
-            'data-order': index
+            'style': 'order: ' + index
         }, [
-            icon.element,
+            createElement('div', { class: 'front-face' }, [
+                icon.element
+            ]),
             createElement('div', { class: 'back-face' }),
         ]);
 
@@ -112,6 +112,22 @@ export class Card {
             flipped: this.flipped
         });
     }
+
+    disable(flag = true) {
+
+        if (flag) {
+            this.#elem.classList.add('disabled');
+        } else {
+            this.#elem.classList.remove('disabled');
+        }
+
+    }
+
+
+    get disabled() {
+        return this.#elem.classList.contains('disabled');
+    }
+
 }
 
 

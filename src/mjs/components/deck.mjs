@@ -39,6 +39,8 @@ export class Deck extends Array {
 
     #pairs = 0
 
+
+
     get element() {
         return this.#elem;
     }
@@ -54,7 +56,20 @@ export class Deck extends Array {
     }
 
     disable(flag = true) {
-        this.#elem.disabled = flag === true ? true : null;
+
+        if (flag === true) {
+            this.#elem.classList.add('disabled');
+        } else {
+            this.#elem.classList.remove('disabled');
+        }
+
+    }
+
+
+
+
+    get disabled() {
+        return this.#elem.classList.contains('disabled');
     }
 
     constructor(cards = []) {
@@ -69,7 +84,7 @@ export class Deck extends Array {
 
         this.on('flipped', e => {
             const { card, flipped } = e.data;
-            let index = this.indexOf(card);
+            let index = this.#flipped.indexOf(card);
 
             if (index !== -1) {
                 if (!flipped) {
@@ -79,16 +94,21 @@ export class Deck extends Array {
             }
 
             if (flipped) {
-                this.#flipped.push(card);
-
+                this.#flipped = [...this].filter(card => card.flipped).filter(card => !card.disabled);
+                console.debug(this.#flipped);
 
                 if (this.#flipped.length === 2) {
 
+                    this.disable();
                     const [one, two] = this.#flipped;
+
+
                     if (one.label === two.label) {
                         this.#pairs++;
                         this.#flipped = [];
 
+                        one.disable();
+                        two.disable();
 
                         this.trigger('success', {
                             deck: this,
@@ -97,20 +117,33 @@ export class Deck extends Array {
 
                         if (this.pairs === this.max) {
                             this.trigger('complete', { deck: this });
+                        } else {
+                            this.disable(false);
                         }
 
                     }
                     else {
-                        setTimeout(() => {
-                            one.toggle();
-                            two.toggle();
-                        }, 1500);
+                        this.#flipped = [];
+                        this.trigger('failed', {
+                            deck: this,
+                            cards: [one, two]
+                        });
+
                     }
                 }
 
             }
 
         });
+
+        this.on('failed', e => {
+            setTimeout(() => {
+                e.data.cards.forEach(card => card.toggle());
+
+                this.disable(false);
+            }, 1500);
+        });
+
     }
 
 
