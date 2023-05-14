@@ -45,5 +45,8 @@
         "postcss:watch": "postcss tmp/bundle.css --map --watch --output public/assets/bundle.css",
         "rollup:watch": "rollup -c -w",
         "serve": "node ./express.config.cjs"
+    },
+    "dependencies": {
+        "devicon": "^2.15.1"
     }
 }
