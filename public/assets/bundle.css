@@ -45,8 +45,12 @@
   transform: rotateY(180deg);
   background-color: #ddd;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
+}
+.memory-card .front-face .card-label {
+  font-size: 0.875rem;
 }
 
 /*# sourceMappingURL=bundle.css.map */

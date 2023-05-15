@@ -1,28 +1,17 @@
 import Deck from "./components/deck.mjs";
+import { SettingsUI } from "./components/settings.mjs";
 import { Chronometer, TimeStamp, Timer, formatTime } from "./components/timer.mjs";
 import { LocalStore } from "./helpers/storage/webstorage.mjs";
 
-const app = document.querySelector('#app');
+/**
+ * @link https://getbootstrap.com/docs/5.3/components/tooltips/
+ */
+
+[...document.querySelectorAll('[data-toggle="tooltip"]')].map(el => new bootstrap.Tooltip(el));
+console.debug(document.querySelectorAll('[data-toggle="tooltip"]'));
+const app = document.querySelector('#app'), settingsUI = new SettingsUI();
 
 
-
-// const timer = new Timer(2000);
-
-
-// timer.on('tick', e => {
-
-//     const { chrono } = e.data;
-
-
-//     console.debug((new TimeStamp(chrono.elapsed)).toString());
-
-// });
-// timer.on('ended', e => {
-//     alert('GAME OVER');
-// });
-
-
-//timer.start();
 
 let deck = Deck.generate(3);
 
@@ -35,4 +24,3 @@ console.debug(deck);
 deck.on('flipped success failed complete', console.debug);
 
 //LocalStore.set('djsdh', { fkjdf: true });
-LocalStore.get('djsdh', 'kkk').then(console.debug);

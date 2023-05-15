@@ -1,6 +1,6 @@
 import dataset from "../helpers/dataset.mjs";
 import EventManager from "../helpers/event-manager.mjs";
-import { createElement, isInt, isString } from "../helpers/utils.mjs";
+import { capitalize, createElement, isInt, isString } from "../helpers/utils.mjs";
 import Icon from "./icon.mjs";
 
 
@@ -72,7 +72,9 @@ export class Card {
 
         }, [
             createElement('div', { class: 'front-face' }, [
-                icon.element
+                '<div></div>',
+                icon.element,
+                createElement('div', { class: 'card-label' }, capitalize(icon.label)),
             ]),
             createElement('div', { class: 'back-face' }),
         ]);
