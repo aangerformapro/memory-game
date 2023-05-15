@@ -1,5 +1,6 @@
 import Deck from "./components/deck.mjs";
 import { Chronometer, TimeStamp, Timer, formatTime } from "./components/timer.mjs";
+import { LocalStore } from "./helpers/storage/webstorage.mjs";
 
 const app = document.querySelector('#app');
 
@@ -23,9 +24,15 @@ const app = document.querySelector('#app');
 
 //timer.start();
 
-let deck = Deck.generate(15);
+let deck = Deck.generate(3);
 
 
 app.appendChild(deck.element);
 
 console.debug(deck);
+
+
+deck.on('flipped success failed complete', console.debug);
+
+//LocalStore.set('djsdh', { fkjdf: true });
+LocalStore.get('djsdh', 'kkk').then(console.debug);

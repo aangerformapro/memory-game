@@ -47,6 +47,7 @@
         "serve": "node ./express.config.cjs"
     },
     "dependencies": {
-        "devicon": "^2.15.1"
+        "devicon": "^2.15.1",
+        "uuid": "^9.0.0"
     }
 }

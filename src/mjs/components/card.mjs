@@ -10,7 +10,6 @@ import Icon from "./icon.mjs";
 
 export class Card {
 
-    #index
     #icon
     #elem
 
@@ -24,9 +23,7 @@ export class Card {
     }
 
 
-    get index() {
-        return this.#index;
-    }
+
 
     get icon() {
         return this.#icon;
@@ -57,11 +54,8 @@ export class Card {
         this.#elem.style.order = num;
     }
 
-    constructor(index, icon) {
+    constructor(icon) {
 
-        if (!isInt(index)) {
-            throw new TypeError('name must be an integer');
-        }
 
         if (isString(icon)) {
             icon = new Icon(icon);
@@ -72,11 +66,10 @@ export class Card {
         }
 
         this.#icon = icon;
-        this.#index = index;
+        ;
         this.#elem = createElement('div', {
             class: 'memory-card col-3',
-            'data-index': index,
-            'style': 'order: ' + index
+
         }, [
             createElement('div', { class: 'front-face' }, [
                 icon.element

@@ -5,10 +5,27 @@ import { createElement, isInt } from "../helpers/utils.mjs";
 import Card from "./card.mjs";
 import { iconNames } from "./icon.mjs";
 
-export class Deck extends Array {
+
+
+function shuffle(list) {
+    let copy = [...list], result = [];
+    while (copy.length > 0) {
+        let randomNumber = Math.floor(Math.random() * copy.length);
+        result.push(copy[randomNumber]);
+        copy.splice(randomNumber, 1);
+    }
+    return result;
+}
+
+
+
+export class Deck {
 
 
     static generate(numberOfCards = 4) {
+
+
+
         if (!isInt(numberOfCards)) {
             throw new TypeError('numberOfCards must be an integer.');
         }
@@ -16,7 +33,7 @@ export class Deck extends Array {
         let
             cards = Math.max(4, numberOfCards + (numberOfCards % 2)),
             available = [...iconNames],
-            labels = new Deck();
+            labels = [];
 
         for (let i = 0; i < cards / 2; i++) {
             let
@@ -25,17 +42,20 @@ export class Deck extends Array {
 
             available.splice(rand, 1);
 
-            for (let j = 1; j < 3; j++) {
-                labels.push(new Card(i * j, label));
+            for (let j = 0; j < 2; j++) {
+                labels.push(new Card(label));
             }
         }
-        return labels.shuffle();
+        return new Deck(shuffle(labels));
     }
 
 
     #elem
 
     #flipped
+
+
+    #cards
 
     #pairs = 0
 
@@ -52,7 +72,7 @@ export class Deck extends Array {
 
 
     get max() {
-        return Math.floor(this.length / 2);
+        return Math.floor(this.#cards.length / 2);
     }
 
     disable(flag = true) {
@@ -73,14 +93,12 @@ export class Deck extends Array {
     }
 
     constructor(cards = []) {
-        super();
+        this.#cards = [];
         this.#flipped = [];
         this.#pairs = 0;
         this.#elem = createElement('div', { class: 'memory-game-area' });
         EventManager.mixin(this);
         cards.forEach(card => this.push(card));
-
-
 
         this.on('flipped', e => {
             const { card, flipped } = e.data;
@@ -94,14 +112,12 @@ export class Deck extends Array {
             }
 
             if (flipped) {
-                this.#flipped = [...this].filter(card => card.flipped).filter(card => !card.disabled);
-                console.debug(this.#flipped);
+                this.#flipped = [...this.#cards].filter(card => card.flipped).filter(card => !card.disabled);
 
                 if (this.#flipped.length === 2) {
 
                     this.disable();
                     const [one, two] = this.#flipped;
-
 
                     if (one.label === two.label) {
                         this.#pairs++;
@@ -114,6 +130,9 @@ export class Deck extends Array {
                             deck: this,
                             cards: [one, two]
                         });
+
+
+                        console.debug(this.pairs, this.max);
 
                         if (this.pairs === this.max) {
                             this.trigger('complete', { deck: this });
@@ -139,7 +158,6 @@ export class Deck extends Array {
         this.on('failed', e => {
             setTimeout(() => {
                 e.data.cards.forEach(card => card.toggle());
-
                 this.disable(false);
             }, 1500);
         });
@@ -150,23 +168,25 @@ export class Deck extends Array {
     push(card) {
 
         if (card instanceof Card) {
-            super.push(card);
+            this.#cards.push(card);
             this.#elem.appendChild(card.element);
-
             card.on('flipped', e => {
                 this.trigger('flipped', e.data);
             });
         }
-
         return this.length;
+    }
 
+
+
+
+
+    forEach(callback) {
+        this.#cards.forEach(callback);
     }
 
     shuffle() {
-        this.forEach(card => {
-            card.order = Math.floor(Math.random() * this.length);
-        });
-
+        this.#cards = shuffle(this.#cards);
         return this;
     }
 
