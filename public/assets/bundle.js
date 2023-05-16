@@ -1465,7 +1465,6 @@ var Deck = /*#__PURE__*/function () {
               deck: _this,
               cards: [one, two]
             });
-            console.debug(_this.pairs, _this.max);
             if (_this.pairs === _this.max) {
               _this.trigger('complete', {
                 deck: _this
@@ -1491,6 +1490,9 @@ var Deck = /*#__PURE__*/function () {
         _this.disable(false);
       }, 1500);
     });
+    this.trigger('displayed', {
+      deck: this
+    });
   }
   _createClass(Deck, [{
     key: "element",
@@ -1505,7 +1507,12 @@ var Deck = /*#__PURE__*/function () {
   }, {
     key: "max",
     get: function get() {
-      return Math.floor(_classPrivateFieldGet(this, _cards).length / 2);
+      return Math.floor(this.length / 2);
+    }
+  }, {
+    key: "length",
+    get: function get() {
+      return _classPrivateFieldGet(this, _cards).length;
     }
   }, {
     key: "disable",
@@ -1725,13 +1732,13 @@ var _store = /*#__PURE__*/new WeakMap();
 var _key = /*#__PURE__*/new WeakMap();
 var _listeners = /*#__PURE__*/new WeakMap();
 var _id = /*#__PURE__*/new WeakMap();
-var _interval = /*#__PURE__*/new WeakMap();
-var _update = /*#__PURE__*/new WeakSet();
+var _interval$1 = /*#__PURE__*/new WeakMap();
+var _update$1 = /*#__PURE__*/new WeakSet();
 var ValueChangeListener = /*#__PURE__*/function () {
   function ValueChangeListener(_store2, key) {
     var interval = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 100;
     _classCallCheck(this, ValueChangeListener);
-    _classPrivateMethodInitSpec(this, _update);
+    _classPrivateMethodInitSpec(this, _update$1);
     _classPrivateFieldInitSpec(this, _store, {
       writable: true,
       value: void 0
@@ -1748,7 +1755,7 @@ var ValueChangeListener = /*#__PURE__*/function () {
       writable: true,
       value: void 0
     });
-    _classPrivateFieldInitSpec(this, _interval, {
+    _classPrivateFieldInitSpec(this, _interval$1, {
       writable: true,
       value: void 0
     });
@@ -1761,7 +1768,7 @@ var ValueChangeListener = /*#__PURE__*/function () {
     if (!isUnsignedInt(interval)) {
       throw new TypeError('Interval can only be a positive integer.');
     }
-    _classPrivateFieldSet(this, _interval, interval);
+    _classPrivateFieldSet(this, _interval$1, interval);
     _classPrivateFieldSet(this, _store, _store2);
     _classPrivateFieldSet(this, _key, key);
     _classPrivateFieldSet(this, _id, null);
@@ -1784,7 +1791,7 @@ var ValueChangeListener = /*#__PURE__*/function () {
         throw new TypeError('Listener is not a Function.');
       }
       _classPrivateFieldGet(this, _listeners).add(listener);
-      _classPrivateMethodGet(this, _update, _update2).call(this);
+      _classPrivateMethodGet(this, _update$1, _update2$1).call(this);
     }
   }, {
     key: "delete",
@@ -1793,13 +1800,13 @@ var ValueChangeListener = /*#__PURE__*/function () {
         throw new TypeError('Listener is not a Function.');
       }
       _classPrivateFieldGet(this, _listeners).delete(listener);
-      _classPrivateMethodGet(this, _update, _update2).call(this);
+      _classPrivateMethodGet(this, _update$1, _update2$1).call(this);
     }
   }, {
     key: "clear",
     value: function clear() {
       _classPrivateFieldGet(this, _listeners).clear();
-      _classPrivateMethodGet(this, _update, _update2).call(this);
+      _classPrivateMethodGet(this, _update$1, _update2$1).call(this);
     }
   }]);
   return ValueChangeListener;
@@ -1808,7 +1815,7 @@ var ValueChangeListener = /*#__PURE__*/function () {
  * The default DataStore interface
  * Implements ValueChangeListener
  */
-function _update2() {
+function _update2$1() {
   return _update3.apply(this, arguments);
 }
 function _update3() {
@@ -1854,7 +1861,7 @@ function _update3() {
                   return _context7.stop();
               }
             }, _callee7);
-          })), _classPrivateFieldGet(this, _interval)));
+          })), _classPrivateFieldGet(this, _interval$1)));
           _context8.next = 9;
           break;
         case 8:
@@ -2349,6 +2356,14 @@ var RangeSlider = /*#__PURE__*/function () {
     set: function set(label) {
       this.elements.inputLabel.innerHTML = label;
     }
+  }, {
+    key: "inputLabelAfter",
+    get: function get() {
+      return this.elements.inputLabel.dataset.after;
+    },
+    set: function set(after) {
+      this.elements.inputLabel.dataset.after = after;
+    }
   }]);
   return RangeSlider;
 }();
@@ -2356,7 +2371,7 @@ var RangeSlider = /*#__PURE__*/function () {
 var defaults = {
     difficulty: 4,
     timeout: 0,
-    maxscore: 0
+    lives: 0
   },
   keys = Object.keys(defaults);
 var Settings = /*#__PURE__*/function () {
@@ -2388,15 +2403,15 @@ var Settings = /*#__PURE__*/function () {
       });
     }
   }, {
-    key: "maxscore",
+    key: "lives",
     get: function get() {
       return new Promise(function (resolve) {
-        LocalStore.get('maxscore', defaults.maxscore).then(resolve);
+        LocalStore.get('lives', defaults.lives).then(resolve);
       });
     },
-    set: function set(maxscore) {
+    set: function set(lives) {
       return new Promise(function (resolve) {
-        LocalStore.set('maxscore', maxscore).then(resolve);
+        LocalStore.set('lives', lives).then(resolve);
       });
     }
   }, {
@@ -2445,8 +2460,8 @@ var DialogSettings = /*#__PURE__*/_createClass(function DialogSettings() {
       value: 0,
       after: ' minutes'
     }),
-    maxscoreRange = new RangeSlider('maxscore', {
-      label: 'Score maximum',
+    livesRange = new RangeSlider('lives', {
+      label: 'Nombre de vies',
       min: 0,
       max: 3,
       step: 1,
@@ -2456,26 +2471,29 @@ var DialogSettings = /*#__PURE__*/_createClass(function DialogSettings() {
       onsubmit: function onsubmit(e) {
         e.preventDefault();
       }
-    }, [difficultyRange.element, timeoutRange.element, maxscoreRange.element]),
+    }, [difficultyRange.element, timeoutRange.element, livesRange.element]),
     elements = {
       form: form,
       difficultyRange: difficultyRange,
       timeoutRange: timeoutRange,
-      maxscoreRange: maxscoreRange
+      livesRange: livesRange
     };
+  var changed = false,
+    loaded = false;
   difficultyRange.on('change', function (e) {
     var value = e.data.value;
-      difficultyRange.value;
     difficultyRange.inputLabel = value + 'x' + value;
-    maxscoreRange.value = maxscoreRange.value;
   });
-  maxscoreRange.on('change', function (e) {
-    var value = e.data.value,
-      difficulty = difficultyRange.value;
+  livesRange.on('change', function (e) {
+    var value = e.data.value;
     if (0 === value) {
-      maxscoreRange.inputLabel = 'Illimité';
+      livesRange.inputLabelAfter = '';
+      livesRange.inputLabel = 'Illimité';
     } else {
-      maxscoreRange.inputLabel = value * difficulty;
+      livesRange.inputLabelAfter = ' vie';
+      if (value > 1) {
+        livesRange.inputLabelAfter += "s";
+      }
     }
   });
   timeoutRange.on('change', function (e) {
@@ -2490,6 +2508,9 @@ var DialogSettings = /*#__PURE__*/_createClass(function DialogSettings() {
   dialog.body = form;
   document.body.appendChild(dialog.element);
   this.element = dialog.element;
+  this.one('loaded', function () {
+    loaded = true;
+  });
 
   // load settings
 
@@ -2503,8 +2524,12 @@ var DialogSettings = /*#__PURE__*/_createClass(function DialogSettings() {
       dialog: dialog,
       settings: settings
     });
+    form.addEventListener('change', function () {
+      changed = loaded;
+    });
   });
   dialog.onSave(function (e) {
+    console.debug(changed);
     Promise.all(keys.map(function (key) {
       var range = key + 'Range',
         value = elements[range].value;
@@ -2514,13 +2539,344 @@ var DialogSettings = /*#__PURE__*/_createClass(function DialogSettings() {
       keys.forEach(function (key, index) {
         settings[key] = values[index];
       });
+      if (changed) {
+        _this2.trigger('update', {
+          dialog: dialog,
+          settings: settings
+        });
+      }
       _this2.trigger('save', {
         dialog: dialog,
         settings: settings
       });
+      changed = false;
     });
   });
 });
+
+var MILLISECOND = 1,
+  SECOND = 1000,
+  MINUTE = 60000,
+  HOUR = 3600000;
+function computeTime(start) {
+  var elapsed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  return +new Date() - start + elapsed;
+}
+var _ms = /*#__PURE__*/new WeakMap();
+var TimeStamp = /*#__PURE__*/function () {
+  function TimeStamp(ms) {
+    _classCallCheck(this, TimeStamp);
+    _classPrivateFieldInitSpec(this, _ms, {
+      writable: true,
+      value: void 0
+    });
+    if (!isInt(ms)) {
+      throw new TypeError('ms must be an integer');
+    }
+    _classPrivateFieldSet(this, _ms, ms);
+  }
+  _createClass(TimeStamp, [{
+    key: "hours",
+    get: function get() {
+      return Math.floor(_classPrivateFieldGet(this, _ms) / HOUR);
+    }
+  }, {
+    key: "minutes",
+    get: function get() {
+      return Math.floor(_classPrivateFieldGet(this, _ms) / MINUTE);
+    }
+  }, {
+    key: "seconds",
+    get: function get() {
+      return Math.floor(_classPrivateFieldGet(this, _ms) / SECOND);
+    }
+  }, {
+    key: "miliseconds",
+    get: function get() {
+      return _classPrivateFieldGet(this, _ms);
+    }
+  }, {
+    key: "export",
+    value: function _export() {
+      var values = {
+          hours: HOUR,
+          minutes: MINUTE,
+          seconds: SECOND,
+          miliseconds: MILLISECOND
+        },
+        remaining = _classPrivateFieldGet(this, _ms),
+        result = {};
+      for (var key in values) {
+        var divider = values[key],
+          floor = Math.floor(remaining / divider);
+        remaining -= floor * divider;
+        result[key] = floor;
+      }
+      return result;
+    }
+  }, {
+    key: "toString",
+    value: function toString() {
+      return formatTime(_classPrivateFieldGet(this, _ms));
+    }
+  }]);
+  return TimeStamp;
+}();
+var _startTime = /*#__PURE__*/new WeakMap();
+var _running = /*#__PURE__*/new WeakMap();
+var _paused = /*#__PURE__*/new WeakMap();
+var _elapsedTime = /*#__PURE__*/new WeakMap();
+var _laps = /*#__PURE__*/new WeakMap();
+var Chronometer = /*#__PURE__*/function () {
+  function Chronometer() {
+    var autostart = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+    _classCallCheck(this, Chronometer);
+    _classPrivateFieldInitSpec(this, _startTime, {
+      writable: true,
+      value: 0
+    });
+    _classPrivateFieldInitSpec(this, _running, {
+      writable: true,
+      value: false
+    });
+    _classPrivateFieldInitSpec(this, _paused, {
+      writable: true,
+      value: false
+    });
+    _classPrivateFieldInitSpec(this, _elapsedTime, {
+      writable: true,
+      value: 0
+    });
+    _classPrivateFieldInitSpec(this, _laps, {
+      writable: true,
+      value: []
+    });
+    if (autostart) {
+      this.start();
+    }
+  }
+  _createClass(Chronometer, [{
+    key: "start",
+    value: function start() {
+      if (!_classPrivateFieldGet(this, _running)) {
+        _classPrivateFieldSet(this, _running, true);
+        _classPrivateFieldSet(this, _laps, []);
+        _classPrivateFieldSet(this, _elapsedTime, 0);
+        _classPrivateFieldSet(this, _startTime, +new Date());
+      }
+    }
+  }, {
+    key: "stop",
+    value: function stop() {
+      if (!_classPrivateFieldGet(this, _running)) {
+        var _classPrivateFieldGet2;
+        return (_classPrivateFieldGet2 = _classPrivateFieldGet(this, _elapsedTime)) !== null && _classPrivateFieldGet2 !== void 0 ? _classPrivateFieldGet2 : 0;
+      }
+      _classPrivateFieldSet(this, _running, false);
+      return _classPrivateFieldSet(this, _elapsedTime, computeTime(_classPrivateFieldGet(this, _startTime)));
+    }
+  }, {
+    key: "pause",
+    value: function pause() {
+      _classPrivateFieldSet(this, _paused, true);
+      if (!_classPrivateFieldGet(this, _running)) {
+        return _classPrivateFieldGet(this, _elapsedTime);
+      }
+      return this.stop();
+    }
+  }, {
+    key: "resume",
+    value: function resume() {
+      if (!_classPrivateFieldGet(this, _paused)) {
+        return;
+      }
+      _classPrivateFieldSet(this, _paused, false);
+      _classPrivateFieldSet(this, _startTime, +new Date() - _classPrivateFieldGet(this, _elapsedTime));
+      _classPrivateFieldSet(this, _running, true);
+    }
+  }, {
+    key: "lap",
+    value: function lap() {
+      var _classPrivateFieldGet3, _classPrivateFieldGet4;
+      if (!this.isStarted()) {
+        return _classPrivateFieldGet(this, _laps)[_classPrivateFieldGet(this, _laps).length - 1];
+      }
+      var prev = (_classPrivateFieldGet3 = (_classPrivateFieldGet4 = _classPrivateFieldGet(this, _laps)[_classPrivateFieldGet(this, _laps).length - 1]) === null || _classPrivateFieldGet4 === void 0 ? void 0 : _classPrivateFieldGet4.elapsed) !== null && _classPrivateFieldGet3 !== void 0 ? _classPrivateFieldGet3 : _classPrivateFieldGet(this, _startTime),
+        current = this.elapsed,
+        lapTime = {
+          start: _classPrivateFieldGet(this, _startTime),
+          elapsed: current,
+          time: current - prev
+        };
+      _classPrivateFieldGet(this, _laps).push(lapTime);
+      return lapTime;
+    }
+  }, {
+    key: "isStarted",
+    value: function isStarted() {
+      return _classPrivateFieldGet(this, _running);
+    }
+  }, {
+    key: "isPaused",
+    value: function isPaused() {
+      return _classPrivateFieldGet(this, _paused);
+    }
+  }, {
+    key: "elapsed",
+    get: function get() {
+      if (this.isStarted()) {
+        return computeTime(_classPrivateFieldGet(this, _startTime));
+      }
+      return _classPrivateFieldGet(this, _elapsedTime);
+    }
+  }, {
+    key: "export",
+    value: function _export() {
+      return new TimeStamp(this.elapsed).export();
+    }
+  }]);
+  return Chronometer;
+}();
+function formatTime(ms) {
+  var _TimeStamp$export = new TimeStamp(ms).export(),
+    hours = _TimeStamp$export.hours,
+    minutes = _TimeStamp$export.minutes,
+    seconds = _TimeStamp$export.seconds,
+    miliseconds = _TimeStamp$export.miliseconds,
+    result = '';
+  if (hours < 10) {
+    result += '0';
+  }
+  result += hours + ':';
+  if (minutes < 10) {
+    result += '0';
+  }
+  result += minutes + ':';
+  if (seconds < 10) {
+    result += '0';
+  }
+  result += seconds + ',';
+  if (miliseconds < 100) {
+    result += '0';
+  }
+  if (miliseconds < 10) {
+    result += '0';
+  }
+  result += miliseconds;
+  return result;
+}
+
+var _interval = /*#__PURE__*/new WeakMap();
+var _update = /*#__PURE__*/new WeakSet();
+var Clock = /*#__PURE__*/function () {
+  function Clock() {
+    _classCallCheck(this, Clock);
+    _classPrivateMethodInitSpec(this, _update);
+    _defineProperty(this, "chrono", void 0);
+    _defineProperty(this, "elements", void 0);
+    _defineProperty(this, "element", void 0);
+    _classPrivateFieldInitSpec(this, _interval, {
+      writable: true,
+      value: void 0
+    });
+    var hours = createElement('<div class="hours" />'),
+      minutes = createElement('<div class="minutes"/>'),
+      seconds = createElement('<div class="seconds"/>'),
+      root = createElement('<div class="time d-flex"/>', [hours, minutes, seconds]);
+    this.chrono = new Chronometer(false);
+    this.elements = {
+      root: root,
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds
+    };
+    this.element = root;
+    EventManager.mixin(this);
+  }
+  _createClass(Clock, [{
+    key: "seconds",
+    get: function get() {
+      return this.chrono.export().seconds;
+    }
+  }, {
+    key: "hours",
+    get: function get() {
+      return this.chrono.export().hours;
+    }
+  }, {
+    key: "minutes",
+    get: function get() {
+      return this.chrono.export().minutes;
+    }
+  }, {
+    key: "elapsed",
+    get: function get() {
+      return Math.floor(this.chrono.elapsed / 1000);
+    }
+  }, {
+    key: "started",
+    get: function get() {
+      return this.chrono.isStarted();
+    }
+  }, {
+    key: "paused",
+    get: function get() {
+      return this.chrono.isPaused();
+    }
+  }, {
+    key: "start",
+    value: function start() {
+      var _this = this;
+      if (!this.chrono.isStarted()) {
+        this.chrono.start();
+        _classPrivateFieldSet(this, _interval, setInterval(function () {
+          _classPrivateMethodGet(_this, _update, _update2).call(_this);
+        }, 50));
+        this.trigger('start', {
+          clock: this
+        });
+        _classPrivateMethodGet(this, _update, _update2).call(this);
+      }
+    }
+  }, {
+    key: "stop",
+    value: function stop() {
+      if (_classPrivateFieldGet(this, _interval)) {
+        this.chrono.stop();
+        clearInterval(_classPrivateFieldGet(this, _interval));
+        this.trigger('stop', {
+          clock: this
+        });
+        _classPrivateMethodGet(this, _update, _update2).call(this);
+      }
+      _classPrivateFieldSet(this, _interval, null);
+    }
+  }, {
+    key: "pause",
+    value: function pause() {
+      this.chrono.pause();
+      _classPrivateMethodGet(this, _update, _update2).call(this);
+    }
+  }, {
+    key: "resume",
+    value: function resume() {
+      this.chrono.resume();
+    }
+  }]);
+  return Clock;
+}();
+function _update2() {
+  var _this2 = this;
+  var data = this.chrono.export();
+  ['hours', 'minutes', 'seconds'].forEach(function (key) {
+    var value = data[key];
+    _this2.elements[key].innerHTML = value < 10 ? "0".concat(value) : "".concat(value);
+  });
+  this.trigger('update', {
+    data: data,
+    clock: this
+  });
+}
 
 /**
  * @link https://getbootstrap.com/docs/5.3/components/tooltips/
@@ -2531,14 +2887,30 @@ _toConsumableArray(document.querySelectorAll('[data-toggle="tooltip"],[data-bs-t
 });
 console.debug(document.querySelectorAll('[data-toggle="tooltip"]'));
 var app = document.querySelector('#app'),
-  settingsUI = new DialogSettings();
+  settingsUI = new DialogSettings(),
+  clock = new Clock();
 //   const  settingsUI = new SettingsUI();
 
+app.appendChild(clock.element);
+clock.start();
 var deck = Deck.generate(3);
 app.appendChild(deck.element);
 console.debug(deck);
 deck.on('flipped success failed complete', console.debug);
-settingsUI.on('save', console.debug);
+deck.on('flipped', function () {
+  if (clock.paused) {
+    clock.resume();
+  } else if (!clock.started) {
+    clock.start();
+  }
+});
+deck.on('failed', function () {
+  clock.pause();
+});
+deck.on('complete', function () {
+  clock.stop();
+});
+settingsUI.on('save update loaded', console.debug);
 
 //LocalStore.set('djsdh', { fkjdf: true });
 

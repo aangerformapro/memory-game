@@ -8,7 +8,7 @@ import RangeSlider from "./rangeslider.mjs";
 const defaults = {
     difficulty: 4,
     timeout: 0,
-    maxscore: 0
+    lives: 0
 }, keys = Object.keys(defaults);
 
 export class Settings {
@@ -39,15 +39,15 @@ export class Settings {
         });
     }
 
-    static get maxscore() {
+    static get lives() {
         return new Promise(resolve => {
-            LocalStore.get('maxscore', defaults.maxscore).then(resolve);
+            LocalStore.get('lives', defaults.lives).then(resolve);
         });
     }
 
-    static set maxscore(maxscore) {
+    static set lives(lives) {
         return new Promise(resolve => {
-            LocalStore.set('maxscore', maxscore).then(resolve);
+            LocalStore.set('lives', lives).then(resolve);
         });
     }
 
@@ -93,8 +93,6 @@ export class DialogSettings {
 
         //build form
 
-
-
         const
 
             difficultyRange = new RangeSlider('difficulty', {
@@ -114,8 +112,8 @@ export class DialogSettings {
                 after: ' minutes'
             }),
 
-            maxscoreRange = new RangeSlider('maxscore', {
-                label: 'Score maximum',
+            livesRange = new RangeSlider('lives', {
+                label: 'Nombre de vies',
                 min: 0,
                 max: 3,
                 step: 1,
@@ -129,34 +127,36 @@ export class DialogSettings {
             }, [
                 difficultyRange.element,
                 timeoutRange.element,
-                maxscoreRange.element
+                livesRange.element
 
             ]),
             elements = {
                 form,
                 difficultyRange,
                 timeoutRange,
-                maxscoreRange
+                livesRange
             };
 
 
-
+        let changed = false, loaded = false;
 
         difficultyRange.on('change', e => {
-            let value = e.data.value, difficulty = difficultyRange.value;
+            let value = e.data.value;
             difficultyRange.inputLabel = value + 'x' + value;
-
-            maxscoreRange.value = maxscoreRange.value;
-
         });
 
-        maxscoreRange.on('change', e => {
-            let value = e.data.value, difficulty = difficultyRange.value;
+        livesRange.on('change', e => {
+            let value = e.data.value;
             if (0 === value) {
-                maxscoreRange.inputLabel = 'Illimité';
+                livesRange.inputLabelAfter = '';
+                livesRange.inputLabel = 'Illimité';
             } else {
-                maxscoreRange.inputLabel = value * difficulty;
+                livesRange.inputLabelAfter = ' vie';
+                if (value > 1) {
+                    livesRange.inputLabelAfter += "s";
+                }
             }
+
         });
 
         timeoutRange.on('change', e => {
@@ -170,10 +170,16 @@ export class DialogSettings {
         });
 
 
+
+
         dialog.body = form;
         document.body.appendChild(dialog.element);
 
         this.element = dialog.element;
+
+        this.one('loaded', () => {
+            loaded = true;
+        });
 
         // load settings
 
@@ -189,10 +195,16 @@ export class DialogSettings {
                 dialog,
                 settings
             });
+
+            form.addEventListener('change', () => {
+                changed = loaded;
+            });
         });
 
 
         dialog.onSave(e => {
+
+            console.debug(changed);
 
             Promise.all(keys.map(key => {
                 let range = key + 'Range', value = elements[range].value;
@@ -207,12 +219,21 @@ export class DialogSettings {
                     settings[key] = values[index];
                 });
 
+
+                if (changed) {
+                    this.trigger('update', {
+                        dialog,
+                        settings
+                    });
+
+                }
+
                 this.trigger('save', {
                     dialog,
                     settings
                 });
 
-
+                changed = false;
             });
         });
 

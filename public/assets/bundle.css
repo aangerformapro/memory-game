@@ -1,10 +1,15 @@
+body {
+  font-family: "Nova Square", cursive, sans-serif;
+}
+
 .disabled {
   pointer-events: none !important;
 }
 
 .memory-game-area {
-  width: 640px;
-  height: 640px;
+  width: 80vw;
+  max-width: 1024px;
+  height: calc(100vh - 100px);
   margin: auto;
   display: flex;
   flex-wrap: wrap;
@@ -12,11 +17,9 @@
 }
 
 .memory-card {
-  width: calc(25% - 10px);
-  height: calc(33.333% - 10px);
   margin: 5px;
   position: relative;
-  font-size: 6em;
+  font-size: 3em;
   position: relative;
   transform: scale(1);
   transform-style: preserve-3d;
@@ -55,6 +58,17 @@
 
 [data-after]:after {
   content: attr(data-after);
+}
+
+.time {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.time .hours:not(:empty) + .minutes::before,
+.time .minutes:not(:empty) + .seconds::before {
+  content: ":";
+  margin: 0 2px;
 }
 
 /*# sourceMappingURL=bundle.css.map */

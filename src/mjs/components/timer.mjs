@@ -143,9 +143,8 @@ export class Chronometer {
             return;
         }
 
-
         this.#paused = false;
-        this.#startTime = computeTime(this.#elapsedTime);
+        this.#startTime = + new Date() - this.#elapsedTime;
         this.#running = true;
 
     }
@@ -178,16 +177,21 @@ export class Chronometer {
     }
 
     isPaused() {
-        return this.isStarted() && this.#paused;
+        return this.#paused;
     }
 
     get elapsed() {
 
-        if (this.isStarted) {
+        if (this.isStarted()) {
             return computeTime(this.#startTime);
         }
         return this.#elapsedTime;
 
+    }
+
+
+    export() {
+        return (new TimeStamp(this.elapsed)).export();
     }
 
 }

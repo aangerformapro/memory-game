@@ -49,6 +49,16 @@ export class RangeSlider {
     }
 
 
+    get inputLabelAfter() {
+        return this.elements.inputLabel.dataset.after;
+    }
+
+
+    set inputLabelAfter(after) {
+        this.elements.inputLabel.dataset.after = after;
+    }
+
+
     constructor(id, params) {
         const defaults = {
             label: '',

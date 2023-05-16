@@ -70,7 +70,12 @@ export class Deck {
 
 
     get max() {
-        return Math.floor(this.#cards.length / 2);
+        return Math.floor(this.length / 2);
+    }
+
+
+    get length() {
+        return this.#cards.length;
     }
 
     disable(flag = true) {
@@ -129,9 +134,6 @@ export class Deck {
                             cards: [one, two]
                         });
 
-
-                        console.debug(this.pairs, this.max);
-
                         if (this.pairs === this.max) {
                             this.trigger('complete', { deck: this });
                         } else {
@@ -158,6 +160,11 @@ export class Deck {
                 e.data.cards.forEach(card => card.toggle());
                 this.disable(false);
             }, 1500);
+        });
+
+
+        this.trigger('displayed', {
+            deck: this
         });
 
     }
