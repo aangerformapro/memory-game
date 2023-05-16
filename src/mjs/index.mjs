@@ -1,6 +1,7 @@
 import Deck from "./components/deck.mjs";
 import Dialog from "./components/dialog.mjs";
-import { SettingsUI } from "./components/settings.mjs";
+import { DialogSettings, Settings } from "./components/settings.mjs";
+// import { SettingsUI } from "./components/settings.mjs.bak";
 import { Chronometer, TimeStamp, Timer, formatTime } from "./components/timer.mjs";
 import { LocalStore } from "./helpers/storage/webstorage.mjs";
 
@@ -10,7 +11,8 @@ import { LocalStore } from "./helpers/storage/webstorage.mjs";
 
 [...document.querySelectorAll('[data-toggle="tooltip"],[data-bs-toggle="tooltip"]')].map(el => new bootstrap.Tooltip(el));
 console.debug(document.querySelectorAll('[data-toggle="tooltip"]'));
-const app = document.querySelector('#app'), settingsUI = new SettingsUI();
+const app = document.querySelector('#app'), settingsUI = new DialogSettings();
+//   const  settingsUI = new SettingsUI();
 
 
 
@@ -24,8 +26,14 @@ console.debug(deck);
 
 deck.on('flipped success failed complete', console.debug);
 
+
+settingsUI.on('save', console.debug);
+
 //LocalStore.set('djsdh', { fkjdf: true });
 
-let dialog = new Dialog();
+// let dialog = new Dialog();
 
-dialog.show();
+
+// dialog.onSave(console.debug);
+// dialog.show();
+

@@ -1,171 +1,225 @@
 import EventManager from "../helpers/event-manager.mjs";
-import { createElement, isInt, isPlainObject, isString } from "../helpers/utils.mjs";
+import { LocalStore } from "../helpers/storage/webstorage.mjs";
+import { createElement } from "../helpers/utils.mjs";
+import Dialog from "./dialog.mjs";
+import RangeSlider from "./rangeslider.mjs";
 
 
 const defaults = {
     difficulty: 4,
     timeout: 0,
-
-};
-
+    maxscore: 0
+}, keys = Object.keys(defaults);
 
 export class Settings {
 
-    get difficulty() {
-        return this.#settings.difficulty;
+
+    static get difficulty() {
+        return new Promise(resolve => {
+            LocalStore.get('difficulty', defaults.difficulty).then(resolve);
+        });
     }
 
-    set difficulty(num) {
-
-        if (!isInt(num)) {
-            return;
-        }
-        let settings = this.#settings;
-        settings.difficulty = Math.max(4, num);
-        this.#settings = settings;
-    }
-
-
-    set timeout(timeout) {
-
-        if (!isInt(timeout)) {
-            return;
-        }
-        let settings = this.#settings;
-        settings.timeout = Math.max(0, timeout);
-        this.#settings = settings;
-
+    static set difficulty(difficulty) {
+        return new Promise(resolve => {
+            LocalStore.set('difficulty', difficulty).then(resolve);
+        });
     }
 
 
-    get timeout() {
+    static get timeout() {
+        return new Promise(resolve => {
+            LocalStore.get('timeout', defaults.timeout).then(resolve);
+        });
+    }
 
-        return this.#settings.timeout;
+    static set timeout(timeout) {
+        return new Promise(resolve => {
+            LocalStore.set('timeout', timeout).then(resolve);
+        });
+    }
+
+    static get maxscore() {
+        return new Promise(resolve => {
+            LocalStore.get('maxscore', defaults.maxscore).then(resolve);
+        });
+    }
+
+    static set maxscore(maxscore) {
+        return new Promise(resolve => {
+            LocalStore.set('maxscore', maxscore).then(resolve);
+        });
     }
 
 
 
-    get #settings() {
+    static get settings() {
 
+        return new Promise(resolve => {
 
-        let settings = localStorage.getItem('settings') ?? defaults;
+            Promise.all(keys.map(key => this[key])).then(values => {
+                let result = {};
+                keys.forEach((key, index) => {
+                    result[key] = values[index];
+                });
+                resolve(result);
+            });
 
-        if (isString(settings)) {
-            settings = JSON.parse(settings);
-        }
+        });
 
-        return settings;
     }
-
-
-    set #settings(obj) {
-        if (!isPlainObject(obj)) {
-            return;
-        }
-
-
-        localStorage.setItem('settings', JSON.stringify(obj));
-    }
-
-
 
 
 }
 
 
 
-export class SettingsUI {
-
-    #elem
-
-    #modal
-    #form
-    #difficulty
-    #timeout
-    #savebtn
-    #settings
 
 
 
-    set timeout(timeout) {
+export class DialogSettings {
 
-    }
+    element
+    dialog
 
-    get element() {
-        return this.#elem;
-    }
+    constructor() {
 
-    get settings() {
-        return this.#settings;
-    }
-
-
-    constructor(settings) {
-
-        settings ??= new Settings();
-        if (settings instanceof Settings === false) {
-            throw new TypeError('settings must be an instance of Settings.');
-        }
+        const dialog = this.dialog = new Dialog('settings', {
+            title: 'Réglages'
+        });
 
         EventManager.mixin(this);
 
-        this.#settings = settings;
-        this.#elem = document.querySelector('#settings');
 
-        this.#modal = new bootstrap.Modal(this.#elem);
-        this.#form = this.#elem.querySelector('form');
-        this.#savebtn = this.#elem.querySelector('.btn-primary');
-        const formElements = [this.#difficulty, this.#timeout] = [this.#form.querySelector('#difficulty'), this.#form.querySelector('#timeout')];
+        //build form
 
 
-        this.#form.addEventListener('submit', e => e.preventDefault());
 
-        this.#form.addEventListener('change', e => {
+        const
 
-            let input = e.target.closest('input');
+            difficultyRange = new RangeSlider('difficulty', {
+                label: 'Difficulté',
+                min: 4,
+                max: 10,
+                step: 2,
+                value: 4
+            }),
 
-            if (input) {
-                let
-                    { id, value } = input,
-                    span = input.closest('.d-flex').querySelector('span');
+            timeoutRange = new RangeSlider('timeout', {
+                label: 'Limite de temps',
+                min: 0,
+                max: 5,
+                step: 1,
+                value: 0,
+                after: ' minutes'
+            }),
 
-                if (id === 'difficulty') {
-                    span.innerHTML = value + 'x' + value;
-                } else if (id === 'timeout') {
-                    span.innerHTML = value + ' minutes';
+            maxscoreRange = new RangeSlider('maxscore', {
+                label: 'Score maximum',
+                min: 0,
+                max: 3,
+                step: 1,
+                value: 0
+            }),
+
+            form = createElement('<form action="#"/>', {
+                onsubmit(e) {
+                    e.preventDefault();
                 }
+            }, [
+                difficultyRange.element,
+                timeoutRange.element,
+                maxscoreRange.element
+
+            ]),
+            elements = {
+                form,
+                difficultyRange,
+                timeoutRange,
+                maxscoreRange
+            };
+
+
+
+
+        difficultyRange.on('change', e => {
+            let value = e.data.value, difficulty = difficultyRange.value;
+            difficultyRange.inputLabel = value + 'x' + value;
+
+            maxscoreRange.value = maxscoreRange.value;
+
+        });
+
+        maxscoreRange.on('change', e => {
+            let value = e.data.value, difficulty = difficultyRange.value;
+            if (0 === value) {
+                maxscoreRange.inputLabel = 'Illimité';
+            } else {
+                maxscoreRange.inputLabel = value * difficulty;
+            }
+        });
+
+        timeoutRange.on('change', e => {
+            let value = e.data.value;
+            if (0 === value) {
+                timeoutRange.elements.inputLabel.dataset.after = '';
+                timeoutRange.inputLabel = 'Illimité';
+            } else {
+                timeoutRange.elements.inputLabel.dataset.after = ' minutes';
             }
         });
 
 
-        this.#savebtn.addEventListener('click', e => {
-            e.preventDefault();
-            formElements.forEach(elem => {
-                this.settings[elem.id] = JSON.parse(elem.value);
-                this.#modal.hide();
+        dialog.body = form;
+        document.body.appendChild(dialog.element);
+
+        this.element = dialog.element;
+
+        // load settings
+
+        Settings.settings.then(settings => {
+            for (let key in settings) {
+                let
+                    value = settings[key],
+                    range = key + 'Range';
+                elements[range].value = value;
+            }
+
+            this.trigger('loaded', {
+                dialog,
+                settings
             });
+        });
 
-            this.trigger('saved', {
-                ui: this,
-                settings: this.settings
+
+        dialog.onSave(e => {
+
+            Promise.all(keys.map(key => {
+                let range = key + 'Range', value = elements[range].value;
+                return Settings[key] = value;
+
+            })).then(values => {
+
+
+                let settings = {};
+
+                keys.forEach((key, index) => {
+                    settings[key] = values[index];
+                });
+
+                this.trigger('save', {
+                    dialog,
+                    settings
+                });
+
+
             });
-
-        })
-
-
-
-        //init parameters
-        this.#difficulty.value = JSON.stringify(settings.difficulty);
-        this.#timeout.value = JSON.stringify(settings.timeout);
-        this.#difficulty.dispatchEvent(new Event('change', { bubbles: true }));
-        this.#timeout.dispatchEvent(new Event('change', { bubbles: true }));
-
-        this.trigger('loaded', {
-            ui: this,
-            settings: this.settings
         });
 
     }
+
+
+
 }
 
 

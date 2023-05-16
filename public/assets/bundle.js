@@ -568,10 +568,6 @@ function _classPrivateFieldSet(receiver, privateMap, value) {
   _classApplyDescriptorSet(receiver, descriptor, value);
   return value;
 }
-function _classPrivateFieldDestructureSet(receiver, privateMap) {
-  var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set");
-  return _classApplyDescriptorDestructureSet(receiver, descriptor);
-}
 function _classExtractFieldDescriptor(receiver, privateMap, action) {
   if (!privateMap.has(receiver)) {
     throw new TypeError("attempted to " + action + " private field on non-instance");
@@ -603,23 +599,6 @@ function _classApplyDescriptorSet(receiver, descriptor, value) {
       throw new TypeError("attempted to set read only private field");
     }
     descriptor.value = value;
-  }
-}
-function _classApplyDescriptorDestructureSet(receiver, descriptor) {
-  if (descriptor.set) {
-    if (!("__destrObj" in descriptor)) {
-      descriptor.__destrObj = {
-        set value(v) {
-          descriptor.set.call(receiver, v);
-        }
-      };
-    }
-    return descriptor.__destrObj;
-  } else {
-    if (!descriptor.writable) {
-      throw new TypeError("attempted to set read only private field");
-    }
-    return descriptor;
   }
 }
 function _classCheckPrivateStaticAccess(receiver, classConstructor) {
@@ -1258,12 +1237,12 @@ var icons = {
     fedora: "devicon-fedora-plain"
   },
   iconNames = Object.keys(icons);
-var _elem$3 = /*#__PURE__*/new WeakMap();
+var _elem$2 = /*#__PURE__*/new WeakMap();
 var _label = /*#__PURE__*/new WeakMap();
 var Icon = /*#__PURE__*/function () {
   function Icon(label) {
     _classCallCheck(this, Icon);
-    _classPrivateFieldInitSpec(this, _elem$3, {
+    _classPrivateFieldInitSpec(this, _elem$2, {
       writable: true,
       value: void 0
     });
@@ -1278,14 +1257,14 @@ var Icon = /*#__PURE__*/function () {
       throw new Error('Invalid label ' + label);
     }
     _classPrivateFieldSet(this, _label, label);
-    _classPrivateFieldSet(this, _elem$3, createElement('i', {
+    _classPrivateFieldSet(this, _elem$2, createElement('i', {
       class: icons[label] + ' font-face'
     }));
   }
   _createClass(Icon, [{
     key: "element",
     get: function get() {
-      return _classPrivateFieldGet(this, _elem$3);
+      return _classPrivateFieldGet(this, _elem$2);
     }
   }, {
     key: "label",
@@ -1300,7 +1279,7 @@ var Icon = /*#__PURE__*/function () {
  * @link https://marina-ferreira.github.io/projects/js/memory-game/
  */
 var _icon = /*#__PURE__*/new WeakMap();
-var _elem$2 = /*#__PURE__*/new WeakMap();
+var _elem$1 = /*#__PURE__*/new WeakMap();
 var Card = /*#__PURE__*/function () {
   function Card(icon) {
     var _this = this;
@@ -1309,7 +1288,7 @@ var Card = /*#__PURE__*/function () {
       writable: true,
       value: void 0
     });
-    _classPrivateFieldInitSpec(this, _elem$2, {
+    _classPrivateFieldInitSpec(this, _elem$1, {
       writable: true,
       value: void 0
     });
@@ -1320,7 +1299,7 @@ var Card = /*#__PURE__*/function () {
       throw new TypeError('icon must be instance of Icon');
     }
     _classPrivateFieldSet(this, _icon, icon);
-    _classPrivateFieldSet(this, _elem$2, createElement('div', {
+    _classPrivateFieldSet(this, _elem$1, createElement('div', {
       class: 'memory-card col-3'
     }, [createElement('div', {
       class: 'front-face'
@@ -1329,20 +1308,20 @@ var Card = /*#__PURE__*/function () {
     }, capitalize(icon.label))]), createElement('div', {
       class: 'back-face'
     })]));
-    Object.defineProperty(_classPrivateFieldGet(this, _elem$2), '_cardInstance', {
+    Object.defineProperty(_classPrivateFieldGet(this, _elem$1), '_cardInstance', {
       value: this,
       configurable: true,
       enumerable: false
     });
     EventManager.mixin(this);
-    _classPrivateFieldGet(this, _elem$2).addEventListener('click', function (e) {
+    _classPrivateFieldGet(this, _elem$1).addEventListener('click', function (e) {
       _this.toggle();
     });
   }
   _createClass(Card, [{
     key: "element",
     get: function get() {
-      return _classPrivateFieldGet(this, _elem$2);
+      return _classPrivateFieldGet(this, _elem$1);
     }
   }, {
     key: "label",
@@ -1357,32 +1336,32 @@ var Card = /*#__PURE__*/function () {
   }, {
     key: "flipped",
     get: function get() {
-      return _classPrivateFieldGet(this, _elem$2).classList.contains('flip');
+      return _classPrivateFieldGet(this, _elem$1).classList.contains('flip');
     }
   }, {
     key: "detached",
     get: function get() {
-      return _classPrivateFieldGet(this, _elem$2).parentElement === null;
+      return _classPrivateFieldGet(this, _elem$1).parentElement === null;
     }
   }, {
     key: "order",
     get: function get() {
       var _classPrivateFieldGet2;
-      return parseInt((_classPrivateFieldGet2 = _classPrivateFieldGet(this, _elem$2).style.order) !== null && _classPrivateFieldGet2 !== void 0 ? _classPrivateFieldGet2 : 0);
+      return parseInt((_classPrivateFieldGet2 = _classPrivateFieldGet(this, _elem$1).style.order) !== null && _classPrivateFieldGet2 !== void 0 ? _classPrivateFieldGet2 : 0);
     },
     set: function set(num) {
       if (!isInt(num)) {
         throw new TypeError('num must be an integer');
       }
-      _classPrivateFieldGet(this, _elem$2).style.order = num;
+      _classPrivateFieldGet(this, _elem$1).style.order = num;
     }
   }, {
     key: "toggle",
     value: function toggle() {
       if (!this.flipped) {
-        _classPrivateFieldGet(this, _elem$2).classList.add('flip');
+        _classPrivateFieldGet(this, _elem$1).classList.add('flip');
       } else {
-        _classPrivateFieldGet(this, _elem$2).classList.remove('flip');
+        _classPrivateFieldGet(this, _elem$1).classList.remove('flip');
       }
       this.trigger('flipped', {
         card: this,
@@ -1394,15 +1373,15 @@ var Card = /*#__PURE__*/function () {
     value: function disable() {
       var flag = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
       if (flag) {
-        _classPrivateFieldGet(this, _elem$2).classList.add('disabled');
+        _classPrivateFieldGet(this, _elem$1).classList.add('disabled');
       } else {
-        _classPrivateFieldGet(this, _elem$2).classList.remove('disabled');
+        _classPrivateFieldGet(this, _elem$1).classList.remove('disabled');
       }
     }
   }, {
     key: "disabled",
     get: function get() {
-      return _classPrivateFieldGet(this, _elem$2).classList.contains('disabled');
+      return _classPrivateFieldGet(this, _elem$1).classList.contains('disabled');
     }
   }]);
   return Card;
@@ -1418,7 +1397,7 @@ function _shuffle(list) {
   }
   return result;
 }
-var _elem$1 = /*#__PURE__*/new WeakMap();
+var _elem = /*#__PURE__*/new WeakMap();
 var _flipped = /*#__PURE__*/new WeakMap();
 var _cards = /*#__PURE__*/new WeakMap();
 var _pairs = /*#__PURE__*/new WeakMap();
@@ -1427,7 +1406,7 @@ var Deck = /*#__PURE__*/function () {
     var _this = this;
     var cards = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     _classCallCheck(this, Deck);
-    _classPrivateFieldInitSpec(this, _elem$1, {
+    _classPrivateFieldInitSpec(this, _elem, {
       writable: true,
       value: void 0
     });
@@ -1446,7 +1425,7 @@ var Deck = /*#__PURE__*/function () {
     _classPrivateFieldSet(this, _cards, []);
     _classPrivateFieldSet(this, _flipped, []);
     _classPrivateFieldSet(this, _pairs, 0);
-    _classPrivateFieldSet(this, _elem$1, createElement('div', {
+    _classPrivateFieldSet(this, _elem, createElement('div', {
       class: 'memory-game-area'
     }));
     EventManager.mixin(this);
@@ -1516,7 +1495,7 @@ var Deck = /*#__PURE__*/function () {
   _createClass(Deck, [{
     key: "element",
     get: function get() {
-      return _classPrivateFieldGet(this, _elem$1);
+      return _classPrivateFieldGet(this, _elem);
     }
   }, {
     key: "pairs",
@@ -1533,15 +1512,15 @@ var Deck = /*#__PURE__*/function () {
     value: function disable() {
       var flag = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
       if (flag === true) {
-        _classPrivateFieldGet(this, _elem$1).classList.add('disabled');
+        _classPrivateFieldGet(this, _elem).classList.add('disabled');
       } else {
-        _classPrivateFieldGet(this, _elem$1).classList.remove('disabled');
+        _classPrivateFieldGet(this, _elem).classList.remove('disabled');
       }
     }
   }, {
     key: "disabled",
     get: function get() {
-      return _classPrivateFieldGet(this, _elem$1).classList.contains('disabled');
+      return _classPrivateFieldGet(this, _elem).classList.contains('disabled');
     }
   }, {
     key: "push",
@@ -1549,7 +1528,7 @@ var Deck = /*#__PURE__*/function () {
       var _this2 = this;
       if (card instanceof Card) {
         _classPrivateFieldGet(this, _cards).push(card);
-        _classPrivateFieldGet(this, _elem$1).appendChild(card.element);
+        _classPrivateFieldGet(this, _elem).appendChild(card.element);
         card.on('flipped', function (e) {
           _this2.trigger('flipped', e.data);
         });
@@ -1592,7 +1571,11 @@ var Deck = /*#__PURE__*/function () {
 }();
 
 var _bootstrap = bootstrap,
-  Modal = _bootstrap.Modal;
+  Modal = _bootstrap.Modal,
+  defaults$1 = {
+    title: document.title,
+    body: ''
+  };
 function innerHTML(elem, html) {
   if (elem instanceof Element) {
     if (isString(html) || html instanceof Element) {
@@ -1601,9 +1584,9 @@ function innerHTML(elem, html) {
     if (isArray(html)) {
       elem.innerHTML = '';
       html.forEach(function (item) {
-        if (isString(html)) {
+        if (isString(item)) {
           elem.innerHTML += item;
-        } else if (html instanceof Element) {
+        } else if (item instanceof Element) {
           elem.appendChild(item);
         }
       });
@@ -1611,32 +1594,42 @@ function innerHTML(elem, html) {
   }
   return elem;
 }
-var _modal$1 = /*#__PURE__*/new WeakMap();
+var _modal = /*#__PURE__*/new WeakMap();
 var _addEventListener = /*#__PURE__*/new WeakSet();
 var Dialog = /*#__PURE__*/function () {
-  function Dialog(id, titleText, bodyContents) {
-    var _id, _titleText, _bodyContents;
+  function Dialog(id, params) {
+    var _id;
     _classCallCheck(this, Dialog);
     _classPrivateMethodInitSpec(this, _addEventListener);
     _defineProperty(this, "elements", void 0);
-    _classPrivateFieldInitSpec(this, _modal$1, {
+    _defineProperty(this, "element", void 0);
+    _classPrivateFieldInitSpec(this, _modal, {
       writable: true,
       value: void 0
     });
+    params = Object.assign({}, defaults$1, isPlainObject(params) ? params : {});
     (_id = id) !== null && _id !== void 0 ? _id : id = uniqid();
-    (_titleText = titleText) !== null && _titleText !== void 0 ? _titleText : titleText = document.title;
-    (_bodyContents = bodyContents) !== null && _bodyContents !== void 0 ? _bodyContents : bodyContents = '';
+    var titleText = params.title,
+      bodyContents = params.body;
     var title = createElement("<h1 class=\"modal-title fs-5\" id=\"".concat(id, "Label\"/>"), titleText),
-      header = createElement(' <div class="modal-header"/>', [title, '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>']),
+      header = createElement('<div class="modal-header"/>', [title, '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>']),
       body = createElement('<div class="modal-body"/>', [bodyContents]),
-      cancelBtn = createElement('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>'),
-      saveBtn = createElement('<button type="button" class="btn btn-primary">Sauvegarder</button>'),
+      cancelBtn = createElement('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal"/>', 'Annuler'),
+      saveBtn = createElement('<button type="button" class="btn btn-primary"/>', {
+        onclick: function onclick(e) {
+          e.preventDefault();
+          e.target.dispatchEvent(new Event('save.bs.modal', {
+            bubbles: true
+          }));
+          modal.hide();
+        }
+      }, 'Sauvegarder'),
       footer = createElement('<div class="modal-footer"/>', [cancelBtn, saveBtn]),
       content = createElement('<div class="modal-content"/>', [header, body, footer]),
       dialog = createElement('<div class="modal-dialog modal-dialog-centered"/>', content),
-      root = createElement("<div class=\"modal fade\" id=\"".concat(id, "\" tabindex=\"-1\" aria-labelledby=\"").concat(id, "Label\" aria-hidden=\"true\"/>"), dialog);
-    modal = new Modal(root);
-    _classPrivateFieldSet(this, _modal$1, modal);
+      root = createElement("<div class=\"modal fade\" id=\"".concat(id, "\" tabindex=\"-1\" aria-labelledby=\"").concat(id, "Label\" aria-hidden=\"true\"/>"), dialog),
+      modal = new Modal(root);
+    _classPrivateFieldSet(this, _modal, modal);
     this.elements = {
       root: root,
       dialog: dialog,
@@ -1648,11 +1641,12 @@ var Dialog = /*#__PURE__*/function () {
       cancelBtn: cancelBtn,
       saveBtn: saveBtn
     };
+    this.element = root;
   }
   _createClass(Dialog, [{
     key: "modal",
     get: function get() {
-      return _classPrivateFieldGet(this, _modal$1);
+      return _classPrivateFieldGet(this, _modal);
     }
   }, {
     key: "title",
@@ -1676,19 +1670,19 @@ var Dialog = /*#__PURE__*/function () {
     key: "hide",
     value: function hide() {
       var _classPrivateFieldGet2;
-      return (_classPrivateFieldGet2 = _classPrivateFieldGet(this, _modal$1)).hide.apply(_classPrivateFieldGet2, arguments);
+      return (_classPrivateFieldGet2 = _classPrivateFieldGet(this, _modal)).hide.apply(_classPrivateFieldGet2, arguments);
     }
   }, {
     key: "show",
     value: function show() {
       var _classPrivateFieldGet3;
-      return (_classPrivateFieldGet3 = _classPrivateFieldGet(this, _modal$1)).show.apply(_classPrivateFieldGet3, arguments);
+      return (_classPrivateFieldGet3 = _classPrivateFieldGet(this, _modal)).show.apply(_classPrivateFieldGet3, arguments);
     }
   }, {
     key: "toggle",
     value: function toggle() {
       var _classPrivateFieldGet4;
-      return (_classPrivateFieldGet4 = _classPrivateFieldGet(this, _modal$1)).toggle.apply(_classPrivateFieldGet4, arguments);
+      return (_classPrivateFieldGet4 = _classPrivateFieldGet(this, _modal)).toggle.apply(_classPrivateFieldGet4, arguments);
     }
   }, {
     key: "onHide",
@@ -1710,6 +1704,11 @@ var Dialog = /*#__PURE__*/function () {
     value: function onShown(listener) {
       _classPrivateMethodGet(this, _addEventListener, _addEventListener2).call(this, listener, 'shown.bs.modal');
     }
+  }, {
+    key: "onSave",
+    value: function onSave(listener) {
+      _classPrivateMethodGet(this, _addEventListener, _addEventListener2).call(this, listener, 'save.bs.modal');
+    }
   }]);
   return Dialog;
 }();
@@ -1718,173 +1717,6 @@ function _addEventListener2(listener, type) {
     this.elements.root.addEventListener(type, listener);
   }
 }
-
-var defaults = {
-  difficulty: 4,
-  timeout: 0
-};
-var _settings = /*#__PURE__*/new WeakMap();
-var Settings = /*#__PURE__*/function () {
-  function Settings() {
-    _classCallCheck(this, Settings);
-    _classPrivateFieldInitSpec(this, _settings, {
-      get: _get_settings,
-      set: _set_settings
-    });
-  }
-  _createClass(Settings, [{
-    key: "difficulty",
-    get: function get() {
-      return _classPrivateFieldGet(this, _settings).difficulty;
-    },
-    set: function set(num) {
-      if (!isInt(num)) {
-        return;
-      }
-      var settings = _classPrivateFieldGet(this, _settings);
-      settings.difficulty = Math.max(4, num);
-      _classPrivateFieldSet(this, _settings, settings);
-    }
-  }, {
-    key: "timeout",
-    get: function get() {
-      return _classPrivateFieldGet(this, _settings).timeout;
-    },
-    set: function set(timeout) {
-      if (!isInt(timeout)) {
-        return;
-      }
-      var settings = _classPrivateFieldGet(this, _settings);
-      settings.timeout = Math.max(0, timeout);
-      _classPrivateFieldSet(this, _settings, settings);
-    }
-  }]);
-  return Settings;
-}();
-function _get_settings() {
-  var _localStorage$getItem;
-  var settings = (_localStorage$getItem = localStorage.getItem('settings')) !== null && _localStorage$getItem !== void 0 ? _localStorage$getItem : defaults;
-  if (isString(settings)) {
-    settings = JSON.parse(settings);
-  }
-  return settings;
-}
-function _set_settings(obj) {
-  if (!isPlainObject(obj)) {
-    return;
-  }
-  localStorage.setItem('settings', JSON.stringify(obj));
-}
-var _elem = /*#__PURE__*/new WeakMap();
-var _modal = /*#__PURE__*/new WeakMap();
-var _form = /*#__PURE__*/new WeakMap();
-var _difficulty = /*#__PURE__*/new WeakMap();
-var _timeout = /*#__PURE__*/new WeakMap();
-var _savebtn = /*#__PURE__*/new WeakMap();
-var _settings2 = /*#__PURE__*/new WeakMap();
-var SettingsUI = /*#__PURE__*/function () {
-  function SettingsUI(settings) {
-    var _settings3,
-      _ref,
-      _this = this;
-    _classCallCheck(this, SettingsUI);
-    _classPrivateFieldInitSpec(this, _elem, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _modal, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _form, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _difficulty, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _timeout, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _savebtn, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _settings2, {
-      writable: true,
-      value: void 0
-    });
-    (_settings3 = settings) !== null && _settings3 !== void 0 ? _settings3 : settings = new Settings();
-    if (settings instanceof Settings === false) {
-      throw new TypeError('settings must be an instance of Settings.');
-    }
-    EventManager.mixin(this);
-    _classPrivateFieldSet(this, _settings2, settings);
-    _classPrivateFieldSet(this, _elem, document.querySelector('#settings'));
-    _classPrivateFieldSet(this, _modal, new bootstrap.Modal(_classPrivateFieldGet(this, _elem)));
-    _classPrivateFieldSet(this, _form, _classPrivateFieldGet(this, _elem).querySelector('form'));
-    _classPrivateFieldSet(this, _savebtn, _classPrivateFieldGet(this, _elem).querySelector('.btn-primary'));
-    var formElements = (_ref = [_classPrivateFieldGet(this, _form).querySelector('#difficulty'), _classPrivateFieldGet(this, _form).querySelector('#timeout')], _classPrivateFieldDestructureSet(this, _difficulty).value = _ref[0], _classPrivateFieldDestructureSet(this, _timeout).value = _ref[1], _ref);
-    _classPrivateFieldGet(this, _form).addEventListener('submit', function (e) {
-      return e.preventDefault();
-    });
-    _classPrivateFieldGet(this, _form).addEventListener('change', function (e) {
-      var input = e.target.closest('input');
-      if (input) {
-        var id = input.id,
-          value = input.value,
-          span = input.closest('.d-flex').querySelector('span');
-        if (id === 'difficulty') {
-          span.innerHTML = value + 'x' + value;
-        } else if (id === 'timeout') {
-          span.innerHTML = value + ' minutes';
-        }
-      }
-    });
-    _classPrivateFieldGet(this, _savebtn).addEventListener('click', function (e) {
-      e.preventDefault();
-      formElements.forEach(function (elem) {
-        _this.settings[elem.id] = JSON.parse(elem.value);
-        _classPrivateFieldGet(_this, _modal).hide();
-      });
-      _this.trigger('saved', {
-        ui: _this,
-        settings: _this.settings
-      });
-    });
-
-    //init parameters
-    _classPrivateFieldGet(this, _difficulty).value = JSON.stringify(settings.difficulty);
-    _classPrivateFieldGet(this, _timeout).value = JSON.stringify(settings.timeout);
-    _classPrivateFieldGet(this, _difficulty).dispatchEvent(new Event('change', {
-      bubbles: true
-    }));
-    _classPrivateFieldGet(this, _timeout).dispatchEvent(new Event('change', {
-      bubbles: true
-    }));
-    this.trigger('loaded', {
-      ui: this,
-      settings: this.settings
-    });
-  }
-  _createClass(SettingsUI, [{
-    key: "timeout",
-    set: function set(timeout) {}
-  }, {
-    key: "element",
-    get: function get() {
-      return _classPrivateFieldGet(this, _elem);
-    }
-  }, {
-    key: "settings",
-    get: function get() {
-      return _classPrivateFieldGet(this, _settings2);
-    }
-  }]);
-  return SettingsUI;
-}();
 
 /**
  * Checks for changes in the datastore
@@ -2424,7 +2256,271 @@ var WebStorage = /*#__PURE__*/function (_DataStore) {
   return WebStorage;
 }(DataStore);
 new WebStorage(sessionStorage);
-  new WebStorage(localStorage);
+  var LocalStore = new WebStorage(localStorage);
+
+var RangeSlider = /*#__PURE__*/function () {
+  function RangeSlider(id, params) {
+    var _id,
+      _this = this;
+    _classCallCheck(this, RangeSlider);
+    _defineProperty(this, "elements", void 0);
+    _defineProperty(this, "element", void 0);
+    var defaults = {
+      label: '',
+      min: 0,
+      max: 1,
+      step: 1,
+      value: 0,
+      after: ''
+    };
+    (_id = id) !== null && _id !== void 0 ? _id : id = uniqid();
+    params = Object.assign({}, defaults, isPlainObject(params) ? params : {});
+    EventManager.mixin(this);
+    var label = createElement("<label for=\"".concat(id, "\" class=\"form-label\" />"), params.label),
+      input = createElement('input', {
+        type: 'range',
+        class: 'form-range',
+        min: params.min,
+        max: params.max,
+        step: params.step,
+        value: params.value,
+        id: id,
+        name: id,
+        after: ''
+      }),
+      inputLabel = createElement('<span class="input-label ms-auto"/>', {
+        'data-after': params.after
+      }, '' + input.value),
+      inputContainer = createElement('<div class="d-flex"/>', [createElement('<div class="col-8"/>', input), inputLabel]),
+      root = createElement('<div class="row flex-column mb-3"/>', {
+        id: id + 'FormElement'
+      }, [label, inputContainer]);
+    this.elements = {
+      root: root,
+      label: label,
+      input: input,
+      inputLabel: inputLabel
+    };
+    this.element = root;
+    input.addEventListener('change', function () {
+      inputLabel.innerHTML = input.value;
+      _this.trigger('change', {
+        value: _this.value,
+        slider: _this
+      });
+    });
+  }
+  _createClass(RangeSlider, [{
+    key: "id",
+    get: function get() {
+      return this.elements.input.id;
+    }
+  }, {
+    key: "label",
+    get: function get() {
+      return this.elements.label.innerHTML;
+    },
+    set: function set(label) {
+      if (isString(label)) {
+        this.elements.label.innerHTML = label;
+      }
+    }
+  }, {
+    key: "value",
+    get: function get() {
+      return JSON.parse(this.elements.input.value);
+    },
+    set: function set(value) {
+      if (isInt(value)) {
+        value = JSON.stringify(value);
+      }
+      if (/^\d+$/.test(value)) {
+        this.elements.input.value = value;
+        this.elements.input.dispatchEvent(new Event('change', {
+          bubbles: true
+        }));
+      }
+    }
+  }, {
+    key: "inputLabel",
+    get: function get() {
+      return this.elements.inputLabel.innerHTML;
+    },
+    set: function set(label) {
+      this.elements.inputLabel.innerHTML = label;
+    }
+  }]);
+  return RangeSlider;
+}();
+
+var defaults = {
+    difficulty: 4,
+    timeout: 0,
+    maxscore: 0
+  },
+  keys = Object.keys(defaults);
+var Settings = /*#__PURE__*/function () {
+  function Settings() {
+    _classCallCheck(this, Settings);
+  }
+  _createClass(Settings, null, [{
+    key: "difficulty",
+    get: function get() {
+      return new Promise(function (resolve) {
+        LocalStore.get('difficulty', defaults.difficulty).then(resolve);
+      });
+    },
+    set: function set(difficulty) {
+      return new Promise(function (resolve) {
+        LocalStore.set('difficulty', difficulty).then(resolve);
+      });
+    }
+  }, {
+    key: "timeout",
+    get: function get() {
+      return new Promise(function (resolve) {
+        LocalStore.get('timeout', defaults.timeout).then(resolve);
+      });
+    },
+    set: function set(timeout) {
+      return new Promise(function (resolve) {
+        LocalStore.set('timeout', timeout).then(resolve);
+      });
+    }
+  }, {
+    key: "maxscore",
+    get: function get() {
+      return new Promise(function (resolve) {
+        LocalStore.get('maxscore', defaults.maxscore).then(resolve);
+      });
+    },
+    set: function set(maxscore) {
+      return new Promise(function (resolve) {
+        LocalStore.set('maxscore', maxscore).then(resolve);
+      });
+    }
+  }, {
+    key: "settings",
+    get: function get() {
+      var _this = this;
+      return new Promise(function (resolve) {
+        Promise.all(keys.map(function (key) {
+          return _this[key];
+        })).then(function (values) {
+          var result = {};
+          keys.forEach(function (key, index) {
+            result[key] = values[index];
+          });
+          resolve(result);
+        });
+      });
+    }
+  }]);
+  return Settings;
+}();
+var DialogSettings = /*#__PURE__*/_createClass(function DialogSettings() {
+  var _this2 = this;
+  _classCallCheck(this, DialogSettings);
+  _defineProperty(this, "element", void 0);
+  _defineProperty(this, "dialog", void 0);
+  var dialog = this.dialog = new Dialog('settings', {
+    title: 'Réglages'
+  });
+  EventManager.mixin(this);
+
+  //build form
+
+  var difficultyRange = new RangeSlider('difficulty', {
+      label: 'Difficulté',
+      min: 4,
+      max: 10,
+      step: 2,
+      value: 4
+    }),
+    timeoutRange = new RangeSlider('timeout', {
+      label: 'Limite de temps',
+      min: 0,
+      max: 5,
+      step: 1,
+      value: 0,
+      after: ' minutes'
+    }),
+    maxscoreRange = new RangeSlider('maxscore', {
+      label: 'Score maximum',
+      min: 0,
+      max: 3,
+      step: 1,
+      value: 0
+    }),
+    form = createElement('<form action="#"/>', {
+      onsubmit: function onsubmit(e) {
+        e.preventDefault();
+      }
+    }, [difficultyRange.element, timeoutRange.element, maxscoreRange.element]),
+    elements = {
+      form: form,
+      difficultyRange: difficultyRange,
+      timeoutRange: timeoutRange,
+      maxscoreRange: maxscoreRange
+    };
+  difficultyRange.on('change', function (e) {
+    var value = e.data.value;
+      difficultyRange.value;
+    difficultyRange.inputLabel = value + 'x' + value;
+    maxscoreRange.value = maxscoreRange.value;
+  });
+  maxscoreRange.on('change', function (e) {
+    var value = e.data.value,
+      difficulty = difficultyRange.value;
+    if (0 === value) {
+      maxscoreRange.inputLabel = 'Illimité';
+    } else {
+      maxscoreRange.inputLabel = value * difficulty;
+    }
+  });
+  timeoutRange.on('change', function (e) {
+    var value = e.data.value;
+    if (0 === value) {
+      timeoutRange.elements.inputLabel.dataset.after = '';
+      timeoutRange.inputLabel = 'Illimité';
+    } else {
+      timeoutRange.elements.inputLabel.dataset.after = ' minutes';
+    }
+  });
+  dialog.body = form;
+  document.body.appendChild(dialog.element);
+  this.element = dialog.element;
+
+  // load settings
+
+  Settings.settings.then(function (settings) {
+    for (var key in settings) {
+      var value = settings[key],
+        range = key + 'Range';
+      elements[range].value = value;
+    }
+    _this2.trigger('loaded', {
+      dialog: dialog,
+      settings: settings
+    });
+  });
+  dialog.onSave(function (e) {
+    Promise.all(keys.map(function (key) {
+      var range = key + 'Range',
+        value = elements[range].value;
+      return Settings[key] = value;
+    })).then(function (values) {
+      var settings = {};
+      keys.forEach(function (key, index) {
+        settings[key] = values[index];
+      });
+      _this2.trigger('save', {
+        dialog: dialog,
+        settings: settings
+      });
+    });
+  });
+});
 
 /**
  * @link https://getbootstrap.com/docs/5.3/components/tooltips/
@@ -2434,15 +2530,20 @@ _toConsumableArray(document.querySelectorAll('[data-toggle="tooltip"],[data-bs-t
   return new bootstrap.Tooltip(el);
 });
 console.debug(document.querySelectorAll('[data-toggle="tooltip"]'));
-var app = document.querySelector('#app');
-  new SettingsUI();
+var app = document.querySelector('#app'),
+  settingsUI = new DialogSettings();
+//   const  settingsUI = new SettingsUI();
+
 var deck = Deck.generate(3);
 app.appendChild(deck.element);
 console.debug(deck);
 deck.on('flipped success failed complete', console.debug);
+settingsUI.on('save', console.debug);
 
 //LocalStore.set('djsdh', { fkjdf: true });
 
-var dialog = new Dialog();
-dialog.show();
+// let dialog = new Dialog();
+
+// dialog.onSave(console.debug);
+// dialog.show();
 //# sourceMappingURL=bundle.js.map

@@ -144,7 +144,6 @@ export function createElement(tag, params = null, html = '') {
 
     params ??= {};
     html ??= '';
-
     const elem = isHTML(tag) ? html2element(tag) : document.createElement(tag);
 
     for (let attr in params) {

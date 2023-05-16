@@ -53,4 +53,8 @@
   font-size: 0.875rem;
 }
 
+[data-after]:after {
+  content: attr(data-after);
+}
+
 /*# sourceMappingURL=bundle.css.map */

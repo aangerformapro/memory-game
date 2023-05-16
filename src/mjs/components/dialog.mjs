@@ -1,9 +1,13 @@
-import { createElement, isArray, isFunction, isString, uniqid } from "../helpers/utils.mjs";
+import { createElement, isArray, isFunction, isPlainObject, isString, uniqid } from "../helpers/utils.mjs";
 
 
 
 const
-    { Modal } = bootstrap;
+    { Modal } = bootstrap,
+    defaults = {
+        title: document.title,
+        body: ''
+    };
 
 
 function innerHTML(elem, html) {
@@ -17,9 +21,9 @@ function innerHTML(elem, html) {
             elem.innerHTML = '';
 
             html.forEach(item => {
-                if (isString(html)) {
+                if (isString(item)) {
                     elem.innerHTML += item;
-                } else if (html instanceof Element) {
+                } else if (item instanceof Element) {
                     elem.appendChild(item);
                 }
             });
@@ -38,6 +42,8 @@ function innerHTML(elem, html) {
 export class Dialog {
 
     elements
+
+    element
 
     #modal
 
@@ -63,18 +69,20 @@ export class Dialog {
         innerHTML(this.elements.body, body);
     }
 
-    constructor(id, titleText, bodyContents) {
+    constructor(id, params) {
 
+
+        params = Object.assign({}, defaults, isPlainObject(params) ? params : {});
 
         id ??= uniqid();
 
-        titleText ??= document.title;
-
-        bodyContents ??= '';
+        let
+            titleText = params.title,
+            bodyContents = params.body;
 
         const
             title = createElement(`<h1 class="modal-title fs-5" id="${id}Label"/>`, titleText),
-            header = createElement(' <div class="modal-header"/>', [
+            header = createElement('<div class="modal-header"/>', [
                 title,
                 '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>'
             ]),
@@ -83,8 +91,14 @@ export class Dialog {
                 bodyContents
             ]),
 
-            cancelBtn = createElement('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>'),
-            saveBtn = createElement('<button type="button" class="btn btn-primary">Sauvegarder</button>'),
+            cancelBtn = createElement('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal"/>', 'Annuler'),
+            saveBtn = createElement('<button type="button" class="btn btn-primary"/>', {
+                onclick(e) {
+                    e.preventDefault();
+                    e.target.dispatchEvent(new Event('save.bs.modal', { bubbles: true }));
+                    modal.hide();
+                }
+            }, 'Sauvegarder'),
             footer = createElement('<div class="modal-footer"/>', [
                 cancelBtn,
                 saveBtn
@@ -96,8 +110,8 @@ export class Dialog {
                 footer
             ]),
             dialog = createElement('<div class="modal-dialog modal-dialog-centered"/>', content),
-            root = createElement(`<div class="modal fade" id="${id}" tabindex="-1" aria-labelledby="${id}Label" aria-hidden="true"/>`, dialog)
-        modal = new Modal(root);
+            root = createElement(`<div class="modal fade" id="${id}" tabindex="-1" aria-labelledby="${id}Label" aria-hidden="true"/>`, dialog),
+            modal = new Modal(root);
 
         this.#modal = modal;
         this.elements = {
@@ -111,6 +125,8 @@ export class Dialog {
             cancelBtn,
             saveBtn
         };
+        this.element = root;
+
 
     }
 
@@ -149,6 +165,10 @@ export class Dialog {
 
     onShown(listener) {
         this.#addEventListener(listener, 'shown.bs.modal');
+    }
+
+    onSave(listener) {
+        this.#addEventListener(listener, 'save.bs.modal');
     }
 
 

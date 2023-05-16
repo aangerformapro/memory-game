@@ -24,8 +24,6 @@ export class Deck {
 
     static generate(numberOfCards = 4) {
 
-
-
         if (!isInt(numberOfCards)) {
             throw new TypeError('numberOfCards must be an integer.');
         }
