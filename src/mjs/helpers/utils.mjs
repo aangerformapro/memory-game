@@ -112,6 +112,10 @@ function toDashed(name) {
     });
 }
 
+function isHTML(param) {
+    return isString(param) && param.startsWith('<') && param.endsWith('>');
+}
+
 /**
  * Creates an Element
  *
@@ -141,23 +145,12 @@ export function createElement(tag, params = null, html = '') {
     params ??= {};
     html ??= '';
 
-    const elem = document.createElement(tag);
+    const elem = isHTML(tag) ? html2element(tag) : document.createElement(tag);
 
     for (let attr in params) {
         let value = params[attr];
         if (attr === 'html') {
             html = value;
-            continue;
-        }
-
-        if (/^data(set)?$/.test(attr) && isPlainObject(value)) {
-
-            for (let key in value) {
-                elem.dataset[key] = value[key];
-            }
-            continue;
-        } else if (/^data(-)?\w/.test(attr)) {
-            elem.setAttribute(toDashed(attr), value);
             continue;
         }
 
@@ -273,7 +266,7 @@ export function html2doc(html) {
 /**
  * Creates an HTMLElement from html code
  * @param {string} html
- * @returns {HTMLElement|Text|NodeList}
+ * @returns {HTMLElement|Array|undefined}
  */
 export function html2element(html) {
     if (isString(html) && html.length > 0) {
@@ -283,7 +276,7 @@ export function html2element(html) {
             return;
         }
         if (content.childNodes.length > 1) {
-            return content.childNodes;
+            return [...content.childNodes];
         } else {
             return content.childNodes[0];
         }

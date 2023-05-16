@@ -4,7 +4,7 @@ import { createElement, isInt, isPlainObject, isString } from "../helpers/utils.
 
 const defaults = {
     difficulty: 4,
-    timeout: 5,
+    timeout: 0,
 
 };
 

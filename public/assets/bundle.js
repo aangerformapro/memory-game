@@ -378,6 +378,20 @@ function _createClass(Constructor, protoProps, staticProps) {
   });
   return Constructor;
 }
+function _defineProperty(obj, key, value) {
+  key = _toPropertyKey(key);
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+  return obj;
+}
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
     throw new TypeError("Super expression must either be null or a function");
@@ -701,10 +715,8 @@ function runAsync(callback) {
     }, 0);
   }
 }
-function toDashed(name) {
-  return name.replace(/([A-Z])/g, function (u) {
-    return "-" + u.toLowerCase();
-  });
+function isHTML(param) {
+  return isString(param) && param.startsWith('<') && param.endsWith('>');
 }
 
 /**
@@ -728,20 +740,11 @@ function createElement(tag) {
   }
   (_params = params) !== null && _params !== void 0 ? _params : params = {};
   (_html = html) !== null && _html !== void 0 ? _html : html = '';
-  var elem = document$1.createElement(tag);
+  var elem = isHTML(tag) ? html2element(tag) : document$1.createElement(tag);
   for (var attr in params) {
     var value = params[attr];
     if (attr === 'html') {
       html = value;
-      continue;
-    }
-    if (/^data(set)?$/.test(attr) && isPlainObject(value)) {
-      for (var key in value) {
-        elem.dataset[key] = value[key];
-      }
-      continue;
-    } else if (/^data(-)?\w/.test(attr)) {
-      elem.setAttribute(toDashed(attr), value);
       continue;
     }
     if (typeof value === 'string') {
@@ -765,6 +768,40 @@ function createElement(tag) {
     elem.innerHTML = html;
   }
   return elem;
+}
+
+/**
+ * Generate a unique ID
+ * @returns {String}
+ */
+function uniqid() {
+  uniqid.values = uniqid.values || [];
+  var value;
+  while (!value || uniqid.values.includes(value)) {
+    value = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+  }
+  uniqid.values.push(value);
+  return value;
+}
+
+/**
+ * Creates an HTMLElement from html code
+ * @param {string} html
+ * @returns {HTMLElement|Array|undefined}
+ */
+function html2element(html) {
+  if (isString(html) && html.length > 0) {
+    var template = createElement('template', html),
+      content = template.content;
+    if (content.childNodes.length === 0) {
+      return;
+    }
+    if (content.childNodes.length > 1) {
+      return _toConsumableArray(content.childNodes);
+    } else {
+      return content.childNodes[0];
+    }
+  }
 }
 
 var _listeners$1 = /*#__PURE__*/new WeakMap();
@@ -1554,9 +1591,137 @@ var Deck = /*#__PURE__*/function () {
   return Deck;
 }();
 
+var _bootstrap = bootstrap,
+  Modal = _bootstrap.Modal;
+function innerHTML(elem, html) {
+  if (elem instanceof Element) {
+    if (isString(html) || html instanceof Element) {
+      html = [html];
+    }
+    if (isArray(html)) {
+      elem.innerHTML = '';
+      html.forEach(function (item) {
+        if (isString(html)) {
+          elem.innerHTML += item;
+        } else if (html instanceof Element) {
+          elem.appendChild(item);
+        }
+      });
+    }
+  }
+  return elem;
+}
+var _modal$1 = /*#__PURE__*/new WeakMap();
+var _addEventListener = /*#__PURE__*/new WeakSet();
+var Dialog = /*#__PURE__*/function () {
+  function Dialog(id, titleText, bodyContents) {
+    var _id, _titleText, _bodyContents;
+    _classCallCheck(this, Dialog);
+    _classPrivateMethodInitSpec(this, _addEventListener);
+    _defineProperty(this, "elements", void 0);
+    _classPrivateFieldInitSpec(this, _modal$1, {
+      writable: true,
+      value: void 0
+    });
+    (_id = id) !== null && _id !== void 0 ? _id : id = uniqid();
+    (_titleText = titleText) !== null && _titleText !== void 0 ? _titleText : titleText = document.title;
+    (_bodyContents = bodyContents) !== null && _bodyContents !== void 0 ? _bodyContents : bodyContents = '';
+    var title = createElement("<h1 class=\"modal-title fs-5\" id=\"".concat(id, "Label\"/>"), titleText),
+      header = createElement(' <div class="modal-header"/>', [title, '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>']),
+      body = createElement('<div class="modal-body"/>', [bodyContents]),
+      cancelBtn = createElement('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>'),
+      saveBtn = createElement('<button type="button" class="btn btn-primary">Sauvegarder</button>'),
+      footer = createElement('<div class="modal-footer"/>', [cancelBtn, saveBtn]),
+      content = createElement('<div class="modal-content"/>', [header, body, footer]),
+      dialog = createElement('<div class="modal-dialog modal-dialog-centered"/>', content),
+      root = createElement("<div class=\"modal fade\" id=\"".concat(id, "\" tabindex=\"-1\" aria-labelledby=\"").concat(id, "Label\" aria-hidden=\"true\"/>"), dialog);
+    modal = new Modal(root);
+    _classPrivateFieldSet(this, _modal$1, modal);
+    this.elements = {
+      root: root,
+      dialog: dialog,
+      content: content,
+      header: header,
+      title: title,
+      body: body,
+      footer: footer,
+      cancelBtn: cancelBtn,
+      saveBtn: saveBtn
+    };
+  }
+  _createClass(Dialog, [{
+    key: "modal",
+    get: function get() {
+      return _classPrivateFieldGet(this, _modal$1);
+    }
+  }, {
+    key: "title",
+    get: function get() {
+      return this.elements.title.innerHTML;
+    },
+    set: function set(title) {
+      if (isString(title)) {
+        this.elements.title.innerHTML = title;
+      }
+    }
+  }, {
+    key: "body",
+    get: function get() {
+      return this.elements.body;
+    },
+    set: function set(body) {
+      innerHTML(this.elements.body, body);
+    }
+  }, {
+    key: "hide",
+    value: function hide() {
+      var _classPrivateFieldGet2;
+      return (_classPrivateFieldGet2 = _classPrivateFieldGet(this, _modal$1)).hide.apply(_classPrivateFieldGet2, arguments);
+    }
+  }, {
+    key: "show",
+    value: function show() {
+      var _classPrivateFieldGet3;
+      return (_classPrivateFieldGet3 = _classPrivateFieldGet(this, _modal$1)).show.apply(_classPrivateFieldGet3, arguments);
+    }
+  }, {
+    key: "toggle",
+    value: function toggle() {
+      var _classPrivateFieldGet4;
+      return (_classPrivateFieldGet4 = _classPrivateFieldGet(this, _modal$1)).toggle.apply(_classPrivateFieldGet4, arguments);
+    }
+  }, {
+    key: "onHide",
+    value: function onHide(listener) {
+      _classPrivateMethodGet(this, _addEventListener, _addEventListener2).call(this, listener, 'hide.bs.modal');
+    }
+  }, {
+    key: "onHidden",
+    value: function onHidden(listener) {
+      _classPrivateMethodGet(this, _addEventListener, _addEventListener2).call(this, listener, 'hiden.bs.modal');
+    }
+  }, {
+    key: "onShow",
+    value: function onShow(listener) {
+      _classPrivateMethodGet(this, _addEventListener, _addEventListener2).call(this, listener, 'show.bs.modal');
+    }
+  }, {
+    key: "onShown",
+    value: function onShown(listener) {
+      _classPrivateMethodGet(this, _addEventListener, _addEventListener2).call(this, listener, 'shown.bs.modal');
+    }
+  }]);
+  return Dialog;
+}();
+function _addEventListener2(listener, type) {
+  if (isFunction(listener)) {
+    this.elements.root.addEventListener(type, listener);
+  }
+}
+
 var defaults = {
   difficulty: 4,
-  timeout: 5
+  timeout: 0
 };
 var _settings = /*#__PURE__*/new WeakMap();
 var Settings = /*#__PURE__*/function () {
@@ -2265,7 +2430,7 @@ new WebStorage(sessionStorage);
  * @link https://getbootstrap.com/docs/5.3/components/tooltips/
  */
 
-_toConsumableArray(document.querySelectorAll('[data-toggle="tooltip"]')).map(function (el) {
+_toConsumableArray(document.querySelectorAll('[data-toggle="tooltip"],[data-bs-toggle="tooltip"]')).map(function (el) {
   return new bootstrap.Tooltip(el);
 });
 console.debug(document.querySelectorAll('[data-toggle="tooltip"]'));
@@ -2277,4 +2442,7 @@ console.debug(deck);
 deck.on('flipped success failed complete', console.debug);
 
 //LocalStore.set('djsdh', { fkjdf: true });
+
+var dialog = new Dialog();
+dialog.show();
 //# sourceMappingURL=bundle.js.map
