@@ -1,25 +1,27 @@
 @use './helpers' as *;
 
 
-body
-{
+$theme1: #F27059;
+$theme2: #A4C2A8;
+$theme3: #BFACB5;
+$theme4: #E5D0CC;
+
+
+body {
     font-family: 'Nova Square', cursive, sans-serif;
 }
 
-.disabled
-{
+.disabled {
     pointer-events: none !important;
 
 }
 
 
-header
-{
+header {
     height: 60px;
 }
 
-#app
-{
+#app {
     width: 100vw;
     max-width: 1024px;
     margin: 10px auto;
@@ -27,15 +29,13 @@ header
 
     overflow: hidden;
 
-    @include lg
-    {
+    @include lg {
         width: 80vw;
     }
 }
 
-.memory-game-area
-{
-
+.memory-game-area {
+    cursor: pointer;
     position: relative;
     margin: auto;
     display: flex;
@@ -44,95 +44,93 @@ header
     height: calc(100vh - 220px);
 
 
-    .card-label
-    {
+
+    .memory-card {
+        background: #1C7CCC;
+    }
+
+    &.theme1 .memory-card {
+
+        background: $theme1;
+
+    }
+
+    &.theme2 .memory-card {
+        background: $theme2;
+    }
+
+    &.theme3 .memory-card {
+        background: $theme3;
+    }
+
+
+    &.theme4 .memory-card {
+        background: $theme4;
+    }
+
+
+
+
+    .card-label {
         font-size: .875rem;
     }
 
-    &[data-grid="2"]
-    {
-        .memory-card
-        {
+    &[data-grid="2"] {
+        .memory-card {
             font-size: 6rem;
             width: calc(50% - 10px);
             height: calc(50% - 10px);
         }
     }
 
-    &[data-grid="4"]
-    {
-        .memory-card
-        {
+    &[data-grid="4"] {
+        .memory-card {
             font-size: 5rem;
             width: calc(25% - 10px);
             height: calc(25% - 10px);
         }
     }
 
-    &[data-grid="6"]
-    {
-        .memory-card
-        {
+    &[data-grid="6"] {
+        .memory-card {
             font-size: 3rem;
             width: calc(16.66% - 10px);
             height: calc(16.66% - 10px);
 
-            .card-label
-            {
+            .card-label {
                 font-size: .675rem;
             }
         }
     }
 
-    &[data-grid="8"]
-    {
-        .memory-card
-        {
-            font-size: 1.35rem;
+    &[data-grid="8"] {
+        .memory-card {
+            font-size: 2.5rem;
             width: calc(12.5% - 10px);
             height: calc(12.5% - 10px);
 
-            .front-face
-            {
+            .front-face {
                 justify-content: center;
             }
 
-            .card-label
-            {
-
-                font-size: .55rem;
-            }
-        }
-    }
-
-    &[data-grid="10"]
-    {
-        .memory-card
-        {
-            font-size: 1.2rem;
-            width: calc(10% - 6px);
-            height: calc(10% - 6px);
-
-            margin: 3px;
-
-            .front-face
-            {
-                justify-content: start;
-            }
-
-            .card-label
-            {
-                font-size: .65rem;
+            .card-label {
                 display: none;
             }
+
+            @include md-down {
+                font-size: 1.5rem;
+
+
+            }
         }
     }
+
+
 
 
     &.complete::before,
     &.gameover::before,
-    &.paused::before
-    {
+    &.paused::before {
         display: block;
         position: absolute;
         top: 0;
@@ -145,8 +143,7 @@ header
 
     &.complete::after,
     &.gameover::after,
-    &.paused::after
-    {
+    &.paused::after {
         z-index: 4;
         position: absolute;
 
@@ -165,52 +162,44 @@ header
 
     }
 
-    &.gameover::before
-    {
+    &.gameover::before {
         background-color: rgba(var(--bs-danger-rgb), .3);
     }
 
 
-    &.gameover::after
-    {
+    &.gameover::after {
         content: 'game over';
         background-color: rgba(var(--bs-danger-rgb), 1);
     }
 
-    &.complete::before
-    {
+    &.complete::before {
         background-color: rgba(var(--bs-success-rgb), .3);
     }
 
 
-    &.complete::after
-    {
+    &.complete::after {
         content: 'nouvelle partie';
         background-color: rgba(var(--bs-success-rgb), 1);
     }
 
-    &.paused::before
-    {
+    &.paused::before {
         background-color: rgba(var(--bs-info-rgb), .3);
     }
 
-    &.paused::after
-    {
+    &.paused::after {
         content: 'pause';
         background-color: rgba(var(--bs-info-rgb), 1);
     }
 
 
     &.gameover,
-    &.complete
-    {
+    &.complete {
         pointer-events: auto !important;
         cursor: pointer;
     }
 }
 
-.memory-card
-{
+.memory-card {
 
 
 
@@ -226,38 +215,30 @@ header
     border-radius: 5px;
 
 
-    opacity: 1;
-
-
-    &:active
-    {
+    &:active {
         transform: scale(0.97);
         transition: transform .2s;
     }
 
-    &.flip
-    {
+    &.flip {
         transform: rotateY(180deg);
     }
 
 
     .front-face,
-    .back-face
-    {
+    .back-face {
         width: 100%;
         height: 100%;
         padding: 20px;
         position: absolute;
         border-radius: 5px;
-        background: #1C7CCC;
         backface-visibility: hidden;
         overflow: hidden;
         z-index: 1;
     }
 
 
-    .front-face
-    {
+    .front-face {
         transform: rotateY(180deg);
 
         background-color: #ddd;
@@ -271,19 +252,17 @@ header
 
     }
 
-    &.matched
-    {
+    &.matched {
         box-shadow: none;
 
-        &::after
-        {
+        &::after {
             z-index: 2;
             animation: cardFadeOut 1s ease-in-out 0s 1 reverse both;
             position: absolute;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            left: -5px;
+            right: -5px;
+            bottom: 0;
             background-color: var(--bs-body-bg);
             content: '';
         }
@@ -291,52 +270,43 @@ header
 
 }
 
-@keyframes cardFadeOut
-{
-    0%
-    {
+@keyframes cardFadeOut {
+    0% {
         opacity: 1;
     }
 
-    100%
-    {
+    100% {
         opacity: 0;
     }
 }
 
 
-[data-after]:after
-{
+[data-after]:after {
     content: attr(data-after);
 }
 
 
-[data-before]:before
-{
+[data-before]:before {
     content: attr(data-before);
 }
 
-.time
-{
+.time {
 
     user-select: none;
     width: 80px;
 
 
     .hours:empty,
-    .minutes:empty
-    {
+    .minutes:empty {
         margin: 0;
     }
 
-    .seconds:empty::after
-    {
+    .seconds:empty::after {
         content: '∞';
     }
 
-    .hours:not(:empty) + .minutes::before,
-    .minutes:not(:empty) + .seconds::before
-    {
+    .hours:not(:empty)+.minutes::before,
+    .minutes:not(:empty)+.seconds::before {
         content: ':';
         display: inline-block;
         margin: 0 2px;
@@ -345,12 +315,10 @@ header
 }
 
 
-.game-stats
-{
+.game-stats {
 
     td:not([colspan]),
-    th
-    {
+    th {
         width: calc(20% - 2px);
     }
 }

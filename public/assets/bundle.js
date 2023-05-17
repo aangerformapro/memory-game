@@ -1858,7 +1858,7 @@ var DialogSettings = /*#__PURE__*/_createClass(function DialogSettings() {
   var difficultyRange = new RangeSlider('difficulty', {
       label: 'Difficulté',
       min: 2,
-      max: 10,
+      max: 8,
       step: 2,
       value: 4
     }),

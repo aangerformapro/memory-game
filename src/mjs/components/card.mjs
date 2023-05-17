@@ -23,8 +23,6 @@ export class Card {
     }
 
 
-
-
     get icon() {
         return this.#icon;
     }
