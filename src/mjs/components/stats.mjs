@@ -1,6 +1,7 @@
+import { decode, encode } from "../helpers/dataset.mjs";
 import EventManager from "../helpers/event-manager.mjs";
-import { createElement } from "../helpers/utils.mjs";
-import { Chronometer } from "./timer.mjs";
+import { createElement, isInt } from "../helpers/utils.mjs";
+import { Chronometer, MINUTE, TimeStamp } from "./timer.mjs";
 
 const defaults = {
     score: 0,
@@ -11,46 +12,140 @@ const defaults = {
 export class Stats {
 
 
+    get tour() {
+        return decode(this.elements.tour.innerHTML);
+    }
+
+    set tour(tour) {
+        this.elements.tour.innerHTML = encode(tour);
+    }
+
+
     get pairs() {
-        return this.#deck.pairs;
+        return decode(this.elements.pairs.innerHTML);
     }
 
-    get lives() {
-        return this.#lives;
+    set pairs(pairs) {
+        this.elements.pairs.innerHTML = encode(pairs);
     }
 
-    get missed() {
-        return this.#missed;
+    get vies() {
+        return decode(this.elements.vies.innerHTML);
     }
 
-
-    get score() {
-        return this.#score;
+    set vies(vies) {
+        this.elements.vies.innerHTML = encode(vies);
     }
-
 
     get elapsed() {
-        return 0;
+        return this.timer.elapsed;
     }
 
 
     element
     elements
-    #deck
-    #settings
+    timer
+    countdown
+    deck
+    settings
 
-    #lives = 0
-
-    #score = 0
-
-    #missed = 0
+    #vies
 
 
-    constructor(deck, params) {
-        this.#deck = deck;
+
+    constructor(deck, settings) {
+        this.deck = deck;
+        this.settings = settings;
+
         EventManager.mixin(this);
-    }
 
+
+        this.#vies = settings.lives === 0 ? -1 : settings.lives;
+
+        const
+
+            tour = createElement('td', '0'),
+            pairs = createElement('td', '0'),
+            vies = createElement('td', '&infin;'),
+            timer = this.timer = new Clock(),
+
+            countdown = this.countdown = new CountDownClock(timer, settings.timeout * MINUTE),
+
+            root = createElement('<table class="table table-fixed table-bordered text-center mb-0 game-stats">', [
+                '<thead><tr><th>Cartes</th><th>Tour</th><th>Paires</th><th>Vies</th><th>Timer</th></tr></thead>',
+                createElement('tbody', [
+                    createElement('tr', [
+                        createElement('td', encode(deck.length)),
+                        tour,
+                        pairs,
+                        vies,
+                        createElement('td', timer.element),
+
+
+                    ]),
+                    createElement('tr', [
+                        createElement('<td colspan="5"/>', countdown.element)
+                    ])
+                ])
+
+
+            ]);
+
+        this.element = root;
+        this.elements = {
+            root, tour, pairs, vies
+        };
+
+
+        countdown.on('timeout', e => {
+            deck.trigger('gameover');
+        });
+
+        deck.one('flipped', e => {
+            timer.start();
+        });
+
+        deck.on('success failed', e => {
+            this.tour = deck.flips;
+            this.pairs = deck.pairs;
+
+            if (e.type === 'failed') {
+                if (this.#vies === 0) {
+                    deck.trigger('gameover');
+                } else {
+                    this.#vies--;
+
+                    if (this.#vies > -1) {
+                        this.vies = this.#vies;
+                    }
+                }
+
+            } else if (settings.matched > 0) {
+                const [one, two] = e.data.cards;
+                setTimeout(() => {
+                    one.matched = true;
+                    two.matched = true;
+                }, 2000);
+
+
+            }
+
+        });
+
+
+        deck.on('gameover complete', e => {
+            timer.stop();
+        });
+
+        if (this.#vies > -1) {
+            this.vies = this.#vies;
+        }
+    }
+    destroy() {
+        this.timer.stop();
+        this.element.remove();
+        this.deck.destroy();
+    }
 
 
 }
@@ -88,11 +183,13 @@ export class Clock {
         return this.chrono.isPaused();
     }
 
+
+    get started() {
+        return this.chrono.isStarted();
+    }
+
     chrono
-
-
     elements
-
     element
 
     #interval
@@ -101,10 +198,10 @@ export class Clock {
 
 
         const
-            hours = createElement('<div class="hours" />'),
-            minutes = createElement('<div class="minutes"/>'),
-            seconds = createElement('<div class="seconds"/>'),
-            root = createElement('<div class="time d-flex"/>', [
+            hours = createElement('<span class="hours" />'),
+            minutes = createElement('<span class="minutes"/>'),
+            seconds = createElement('<span class="seconds"/>'),
+            root = createElement('<div class="time  mx-auto"/>', [
                 hours, minutes, seconds
             ]);
 
@@ -121,19 +218,29 @@ export class Clock {
 
     #update() {
 
+        if (this.chrono.isPaused()) {
+            return;
+        }
+
         const data = this.chrono.export();
 
-        ['hours', 'minutes', 'seconds'].forEach(key => {
-            let value = data[key];
-            this.elements[key].innerHTML = value < 10 ? `0${value}` : `${value}`;
-        });
+        if (data.timestamp > 0) {
+            ['hours', 'minutes', 'seconds'].forEach(key => {
+
+                if (key === 'hours' && data[key] === 0) {
+                    return;
+                }
+
+                let value = data[key];
+                this.elements[key].innerHTML = value < 10 ? `0${value}` : `${value}`;
+            });
+        }
 
         this.trigger('update', {
             data,
-            clock: this
+            clock: this,
+            chrono: this.chrono
         });
-
-
 
     }
 
@@ -171,8 +278,9 @@ export class Clock {
 
     pause() {
 
-        this.chrono.pause();
+
         this.#update();
+        this.chrono.pause();
 
     }
 
@@ -183,5 +291,90 @@ export class Clock {
 }
 
 
+
+class CountDownClock {
+
+
+    clock
+    element
+
+    elements
+
+    timeout
+
+    constructor(clock, timeout = 0) {
+
+        if (clock instanceof Clock === false) {
+            throw new TypeError('clock must be an instance of Clock');
+        }
+
+        if (!isInt(timeout)) {
+            throw new TypeError('timeout must be an integer');
+        }
+
+        EventManager.mixin(this);
+
+        this.clock = clock;
+        const
+            hours = createElement('<span class="hours" />'),
+            minutes = createElement('<span class="minutes"/>'),
+            seconds = createElement('<span class="seconds"/>'),
+            root = createElement('<div class="time mx-auto"/>', [
+                hours, minutes, seconds
+            ]);
+        this.elements = {
+            root,
+            hours,
+            minutes,
+            seconds
+        };
+
+        this.element = root;
+        if (timeout > 0) {
+            clock.on('update', e => {
+                const { data } = e.data;
+
+
+                if (data.timestamp >= timeout) {
+
+                    this.#update(0);
+
+                    clock.stop();
+                    this.trigger('timeout', {
+                        clock: clock,
+                        chrono: clock.chrono,
+                        countdown: this
+                    });
+
+
+
+                } else {
+                    this.#update(timeout - data.timestamp);
+                }
+            });
+        }
+
+
+
+
+    }
+
+    #update(ms) {
+
+
+        const data = (new TimeStamp(ms)).export();
+
+        ['hours', 'minutes', 'seconds'].forEach(key => {
+
+            if (key === 'hours' && data[key] === 0) {
+                return;
+            }
+
+            let value = data[key];
+            this.elements[key].innerHTML = value < 10 ? `0${value}` : `${value}`;
+        });
+
+    }
+}
 
 export default Stats;

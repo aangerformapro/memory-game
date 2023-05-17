@@ -36,6 +36,20 @@ export class Card {
     }
 
 
+    get matched() {
+        return this.#elem.classList.contains('matched');
+    }
+
+
+    set matched(bool) {
+
+        this.#elem.classList.remove('matched');
+
+        if (bool === true) {
+            this.#elem.classList.add('matched');
+        }
+    }
+
     get detached() {
         return this.#elem.parentElement === null;
     }
@@ -68,7 +82,7 @@ export class Card {
         this.#icon = icon;
         ;
         this.#elem = createElement('div', {
-            class: 'memory-card col-3',
+            class: 'memory-card',
 
         }, [
             createElement('div', { class: 'front-face' }, [

@@ -97,7 +97,7 @@ export class RangeSlider {
             ),
 
             inputContainer = createElement('<div class="d-flex"/>', [
-                createElement('<div class="col-8"/>', input),
+                createElement('<div class="col-9"/>', input),
                 inputLabel
             ]),
 

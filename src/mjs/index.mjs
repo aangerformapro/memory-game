@@ -1,10 +1,7 @@
-import Deck from "./components/deck.mjs";
-import Dialog from "./components/dialog.mjs";
+
+import Game from "./components/game.mjs";
 import { DialogSettings, Settings } from "./components/settings.mjs";
-import { Clock } from "./components/stats.mjs";
-// import { SettingsUI } from "./components/settings.mjs.bak";
-import { Chronometer, TimeStamp, Timer, formatTime } from "./components/timer.mjs";
-import { LocalStore } from "./helpers/storage/webstorage.mjs";
+
 
 /**
  * @link https://getbootstrap.com/docs/5.3/components/tooltips/
@@ -12,50 +9,26 @@ import { LocalStore } from "./helpers/storage/webstorage.mjs";
 
 [...document.querySelectorAll('[data-toggle="tooltip"],[data-bs-toggle="tooltip"]')].map(el => new bootstrap.Tooltip(el));
 console.debug(document.querySelectorAll('[data-toggle="tooltip"]'));
-const app = document.querySelector('#app'), settingsUI = new DialogSettings(), clock = new Clock();
-//   const  settingsUI = new SettingsUI();
-
-app.appendChild(clock.element);
-
-clock.start();
-
-let deck = Deck.generate(3);
-
-app.appendChild(deck.element);
-
-console.debug(deck);
+let
+    app = document.querySelector('#app'),
+    game = new Game(app), settingsUI = new DialogSettings();
 
 
-deck.on('flipped success failed complete', console.debug);
+document.body.appendChild(settingsUI.element);
 
+settingsUI.on('update', e => {
 
-deck.on('flipped', () => {
-
-
-    if (clock.paused) {
-        clock.resume();
-    } else if (!clock.started) {
-        clock.start();
-    }
+    const { settings } = e.data;
+    game.start(settings);
 });
 
 
-deck.on('failed', () => {
-    clock.pause();
+settingsUI.dialog.onShow(e => {
+    game.pause();
 });
 
-deck.on('complete', () => {
-    clock.stop();
+settingsUI.dialog.onHidden(e => {
+
+    console.debug(e, game);
+    game.resume();
 });
-
-
-settingsUI.on('save update loaded', console.debug);
-
-//LocalStore.set('djsdh', { fkjdf: true });
-
-// let dialog = new Dialog();
-
-
-// dialog.onSave(console.debug);
-// dialog.show();
-

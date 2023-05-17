@@ -93,9 +93,11 @@ export class Dialog {
 
             cancelBtn = createElement('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal"/>', 'Annuler'),
             saveBtn = createElement('<button type="button" class="btn btn-primary"/>', {
-                onclick(e) {
+                onclick: (e) => {
                     e.preventDefault();
-                    e.target.dispatchEvent(new Event('save.bs.modal', { bubbles: true }));
+                    this.onHidden(() => {
+                        e.target.dispatchEvent(new Event('save.bs.modal', { bubbles: true }));
+                    });
                     modal.hide();
                 }
             }, 'Sauvegarder'),
@@ -109,7 +111,7 @@ export class Dialog {
                 body,
                 footer
             ]),
-            dialog = createElement('<div class="modal-dialog modal-dialog-centered"/>', content),
+            dialog = createElement('<div class="modal-dialog modal-dialog-centered modal-fullscreen-md-down user-select-none"/>', content),
             root = createElement(`<div class="modal fade" id="${id}" tabindex="-1" aria-labelledby="${id}Label" aria-hidden="true"/>`, dialog),
             modal = new Modal(root);
 
@@ -156,7 +158,7 @@ export class Dialog {
     }
 
     onHidden(listener) {
-        this.#addEventListener(listener, 'hiden.bs.modal');
+        this.#addEventListener(listener, 'hidden.bs.modal');
     }
 
     onShow(listener) {

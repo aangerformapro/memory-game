@@ -1,5 +1,6 @@
 
 
+import dataset from "../helpers/dataset.mjs";
 import EventManager from "../helpers/event-manager.mjs";
 import { createElement, isInt } from "../helpers/utils.mjs";
 import Card from "./card.mjs";
@@ -19,7 +20,20 @@ function shuffle(list) {
 
 
 
+
+
+
 export class Deck {
+
+
+    static generateGrid(difficulty) {
+
+        if (!isInt(difficulty)) {
+            throw new TypeError('difficulty must be an integer.');
+        }
+
+        return this.generate(difficulty * difficulty);
+    }
 
 
     static generate(numberOfCards = 4) {
@@ -49,15 +63,31 @@ export class Deck {
 
 
     #elem
-
     #flipped
-
-
     #cards
-
     #pairs = 0
+    #flips = 0
 
 
+    #over = false
+    #complete = false
+
+    get grid() {
+        return Math.sqrt(this.length);
+    }
+
+
+    get complete() {
+        return this.#complete;
+    }
+
+    get flips() {
+        return this.#flips;
+    }
+
+    isGameOver() {
+        return this.#over;
+    }
 
     get element() {
         return this.#elem;
@@ -99,7 +129,7 @@ export class Deck {
         this.#cards = [];
         this.#flipped = [];
         this.#pairs = 0;
-        this.#elem = createElement('div', { class: 'memory-game-area' });
+        this.#elem = createElement('div', { class: 'memory-game-area border border-top-0' });
         EventManager.mixin(this);
         cards.forEach(card => this.push(card));
 
@@ -118,7 +148,7 @@ export class Deck {
                 this.#flipped = [...this.#cards].filter(card => card.flipped).filter(card => !card.disabled);
 
                 if (this.#flipped.length === 2) {
-
+                    this.#flips++;
                     this.disable();
                     const [one, two] = this.#flipped;
 
@@ -129,12 +159,16 @@ export class Deck {
                         one.disable();
                         two.disable();
 
+
+
                         this.trigger('success', {
                             deck: this,
                             cards: [one, two]
                         });
 
                         if (this.pairs === this.max) {
+                            this.#complete = true;
+                            this.#elem.classList.add('complete');
                             this.trigger('complete', { deck: this });
                         } else {
                             this.disable(false);
@@ -157,15 +191,26 @@ export class Deck {
 
         this.on('failed', e => {
             setTimeout(() => {
-                e.data.cards.forEach(card => card.toggle());
-                this.disable(false);
+                if (!this.#over) {
+                    e.data.cards.forEach(card => card.toggle());
+                    this.disable(false);
+                }
             }, 1500);
         });
 
 
+        this.on('gameover', e => {
+            this.#over = this.#complete = true;
+            this.#elem.classList.add('gameover');
+            //new game
+            //this.disable(false);
+        });
+
         this.trigger('displayed', {
             deck: this
         });
+
+        dataset(this.#elem, 'grid', this.grid);
 
     }
 
@@ -192,7 +237,14 @@ export class Deck {
 
     shuffle() {
         this.#cards = shuffle(this.#cards);
+        this.#elem.innerHTML = '';
+        this.#cards.forEach(card => this.#elem.appendChild(card.element));
         return this;
+    }
+
+
+    destroy() {
+        this.element.remove();
     }
 
 }

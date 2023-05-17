@@ -59,7 +59,7 @@ function getElem(elem) {
 }
 
 
-function decode(value) {
+export function decode(value) {
 
 
 
@@ -79,7 +79,7 @@ function decode(value) {
 }
 
 
-function encode(value) {
+export function encode(value) {
 
     if (!isString(value)) {
         return JSON.stringify(value);

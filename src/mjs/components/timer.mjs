@@ -4,7 +4,7 @@ import { isInt } from "../helpers/utils.mjs";
 
 
 
-const
+export const
     MILLISECOND = 1,
     SECOND = 1000,
     MINUTE = 60000,
@@ -74,6 +74,9 @@ export class TimeStamp {
             remaining -= floor * divider;
             result[key] = floor;
         }
+
+
+        result.timestamp = this.#ms;
 
         return result;
     }

@@ -8,7 +8,8 @@ import RangeSlider from "./rangeslider.mjs";
 const defaults = {
     difficulty: 4,
     timeout: 0,
-    lives: 0
+    lives: 0,
+    matched: 1
 }, keys = Object.keys(defaults);
 
 export class Settings {
@@ -50,7 +51,17 @@ export class Settings {
             LocalStore.set('lives', lives).then(resolve);
         });
     }
+    static get matched() {
+        return new Promise(resolve => {
+            LocalStore.get('matched', defaults.matched).then(resolve);
+        });
+    }
 
+    static set matched(matched) {
+        return new Promise(resolve => {
+            LocalStore.set('matched', matched).then(resolve);
+        });
+    }
 
 
     static get settings() {
@@ -97,7 +108,7 @@ export class DialogSettings {
 
             difficultyRange = new RangeSlider('difficulty', {
                 label: 'Difficulté',
-                min: 4,
+                min: 2,
                 max: 10,
                 step: 2,
                 value: 4
@@ -115,10 +126,22 @@ export class DialogSettings {
             livesRange = new RangeSlider('lives', {
                 label: 'Nombre de vies',
                 min: 0,
-                max: 3,
+                max: 5,
                 step: 1,
                 value: 0
             }),
+
+            matchedRange = new RangeSlider('matched', {
+
+                label: 'Enlever les cartes valides',
+                min: 0,
+                max: 1,
+                step: 1,
+                value: 0
+
+            }),
+
+
 
             form = createElement('<form action="#"/>', {
                 onsubmit(e) {
@@ -127,14 +150,16 @@ export class DialogSettings {
             }, [
                 difficultyRange.element,
                 timeoutRange.element,
-                livesRange.element
+                livesRange.element,
+                matchedRange.element
 
             ]),
             elements = {
                 form,
                 difficultyRange,
                 timeoutRange,
-                livesRange
+                livesRange,
+                matchedRange
             };
 
 
@@ -149,7 +174,7 @@ export class DialogSettings {
             let value = e.data.value;
             if (0 === value) {
                 livesRange.inputLabelAfter = '';
-                livesRange.inputLabel = 'Illimité';
+                livesRange.inputLabel = '&infin;';
             } else {
                 livesRange.inputLabelAfter = ' vie';
                 if (value > 1) {
@@ -162,12 +187,27 @@ export class DialogSettings {
         timeoutRange.on('change', e => {
             let value = e.data.value;
             if (0 === value) {
-                timeoutRange.elements.inputLabel.dataset.after = '';
-                timeoutRange.inputLabel = 'Illimité';
+                timeoutRange.inputLabelAfter = '';
+                timeoutRange.inputLabel = '&infin;';
             } else {
-                timeoutRange.elements.inputLabel.dataset.after = ' minutes';
+                timeoutRange.inputLabelAfter = ' minute';
+                if (value > 1) {
+                    timeoutRange.inputLabelAfter += "s";
+                }
             }
         });
+
+        matchedRange.on('change', e => {
+            let value = e.data.value;
+            matchedRange.inputLabel = 'on';
+            if (0 === value) {
+                matchedRange.inputLabel = 'off';
+            }
+
+        });
+
+
+
 
 
 
@@ -188,7 +228,12 @@ export class DialogSettings {
                 let
                     value = settings[key],
                     range = key + 'Range';
-                elements[range].value = value;
+                if (elements[range]) {
+
+
+                    elements[range].value = value;
+                }
+
             }
 
             this.trigger('loaded', {
@@ -203,11 +248,14 @@ export class DialogSettings {
 
 
         dialog.onSave(e => {
-
-            console.debug(changed);
-
             Promise.all(keys.map(key => {
-                let range = key + 'Range', value = elements[range].value;
+                let range = key + 'Range', value;
+                if (elements[range]) {
+                    value = elements[range].value;
+                }
+
+
+                console.debug(key, value);
                 return Settings[key] = value;
 
             })).then(values => {
@@ -218,22 +266,21 @@ export class DialogSettings {
                 keys.forEach((key, index) => {
                     settings[key] = values[index];
                 });
-
-
                 if (changed) {
+
+
                     this.trigger('update', {
                         dialog,
                         settings
                     });
-
                 }
 
                 this.trigger('save', {
                     dialog,
                     settings
                 });
-
                 changed = false;
+
             });
         });
 
