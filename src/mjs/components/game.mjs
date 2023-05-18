@@ -3,6 +3,7 @@ import Settings from "./settings.mjs";
 import Deck from "./deck.mjs";
 import Stats from "./stats.mjs";
 import EventManager from "../helpers/event-manager.mjs";
+import dataset from "../helpers/dataset.mjs";
 
 
 export class Game {
@@ -38,9 +39,7 @@ export class Game {
             this.stats.timer.resume();
         });
 
-        Settings.settings.then(settings => this.start(settings));
-
-
+        this.start(Settings);
     }
 
     destroy() {
@@ -55,10 +54,12 @@ export class Game {
 
 
 
-        const { difficulty } = settings, { container } = this;
+        const { difficulty, theme } = settings, { container } = this;
         const
             deck = this.deck = Deck.generateGrid(difficulty),
             stats = this.stats = new Stats(deck, settings);
+
+        dataset(deck.element, 'theme', theme);
 
         container.appendChild(stats.element);
         container.appendChild(deck.element);

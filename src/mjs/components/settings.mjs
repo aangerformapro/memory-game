@@ -3,6 +3,7 @@ import { LocalStore } from "../helpers/storage/webstorage.mjs";
 import { createElement } from "../helpers/utils.mjs";
 import Dialog from "./dialog.mjs";
 import RangeSlider from "./rangeslider.mjs";
+import ThemeSelector from "./themeselector.mjs";
 
 
 const defaults = {
@@ -16,67 +17,61 @@ export class Settings {
 
 
     static get difficulty() {
-        return new Promise(resolve => {
-            LocalStore.get('difficulty', defaults.difficulty).then(resolve);
-        });
+
+
+        return LocalStore.get('difficulty', defaults.difficulty);
+
     }
 
     static set difficulty(difficulty) {
-        return new Promise(resolve => {
-            LocalStore.set('difficulty', difficulty).then(resolve);
-        });
+        LocalStore.set('difficulty', difficulty);
     }
 
 
     static get timeout() {
-        return new Promise(resolve => {
-            LocalStore.get('timeout', defaults.timeout).then(resolve);
-        });
+        return LocalStore.get('timeout', defaults.timeout);
     }
 
     static set timeout(timeout) {
-        return new Promise(resolve => {
-            LocalStore.set('timeout', timeout).then(resolve);
-        });
+        LocalStore.set('timeout', timeout);
     }
 
     static get lives() {
-        return new Promise(resolve => {
-            LocalStore.get('lives', defaults.lives).then(resolve);
-        });
+        return LocalStore.get('lives', defaults.lives);
     }
 
     static set lives(lives) {
-        return new Promise(resolve => {
-            LocalStore.set('lives', lives).then(resolve);
-        });
+        LocalStore.set('lives', lives);
     }
     static get matched() {
-        return new Promise(resolve => {
-            LocalStore.get('matched', defaults.matched).then(resolve);
-        });
+        return LocalStore.get('matched', defaults.matched);
     }
 
     static set matched(matched) {
-        return new Promise(resolve => {
-            LocalStore.set('matched', matched).then(resolve);
-        });
+        LocalStore.set('matched', matched);
     }
+
+
+    static get theme() {
+        return LocalStore.get('theme', -1);
+    }
+
+    static set theme(theme) {
+        return LocalStore.set('theme', theme);
+    }
+
 
 
     static get settings() {
 
-        return new Promise(resolve => {
+        const result = {};
 
-            Promise.all(keys.map(key => this[key])).then(values => {
-                let result = {};
-                keys.forEach((key, index) => {
-                    result[key] = values[index];
-                });
-                resolve(result);
-            });
+        for (let key in defaults) {
 
-        });
+            result[key] = this[key];
+        }
+
+        return result;
 
     }
 
@@ -141,6 +136,7 @@ export class DialogSettings {
 
             }),
 
+            themeSelector = new ThemeSelector([-1, 1, 2, 3, 4], Settings.theme),
 
 
             form = createElement('<form action="#"/>', {
@@ -151,7 +147,8 @@ export class DialogSettings {
                 difficultyRange.element,
                 timeoutRange.element,
                 livesRange.element,
-                matchedRange.element
+                matchedRange.element,
+                themeSelector.element,
 
             ]),
             elements = {
@@ -159,7 +156,8 @@ export class DialogSettings {
                 difficultyRange,
                 timeoutRange,
                 livesRange,
-                matchedRange
+                matchedRange,
+                themeSelector
             };
 
 
@@ -207,11 +205,6 @@ export class DialogSettings {
         });
 
 
-
-
-
-
-
         dialog.body = form;
         document.body.appendChild(dialog.element);
 
@@ -222,66 +215,54 @@ export class DialogSettings {
         });
 
         // load settings
+        const { settings } = Settings;
 
-        Settings.settings.then(settings => {
-            for (let key in settings) {
-                let
-                    value = settings[key],
-                    range = key + 'Range';
-                if (elements[range]) {
-
-
-                    elements[range].value = value;
-                }
-
+        for (let key in settings) {
+            let
+                value = settings[key],
+                range = key + 'Range';
+            if (elements[range]) {
+                elements[range].value = value;
             }
 
-            this.trigger('loaded', {
-                dialog,
-                settings
-            });
+        }
 
-            form.addEventListener('change', () => {
-                changed = loaded;
-            });
+        this.trigger('loaded', {
+            dialog,
+            settings
+        });
+
+        form.addEventListener('change', () => {
+            changed = loaded;
         });
 
 
+
         dialog.onSave(e => {
-            Promise.all(keys.map(key => {
+
+
+            for (let key in defaults) {
                 let range = key + 'Range', value;
                 if (elements[range]) {
-                    value = elements[range].value;
+                    Settings[key] = elements[range].value;
                 }
+            }
 
+            Settings.theme = themeSelector.value;
 
-                console.debug(key, value);
-                return Settings[key] = value;
-
-            })).then(values => {
-
-
-                let settings = {};
-
-                keys.forEach((key, index) => {
-                    settings[key] = values[index];
-                });
-                if (changed) {
-
-
-                    this.trigger('update', {
-                        dialog,
-                        settings
-                    });
-                }
-
-                this.trigger('save', {
+            if (changed) {
+                this.trigger('update', {
                     dialog,
-                    settings
+                    settings: Settings
                 });
-                changed = false;
+            }
 
+            this.trigger('save', {
+                dialog,
+                settings: Settings
             });
+            changed = false;
+
         });
 
     }

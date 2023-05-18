@@ -25,337 +25,6 @@ function _iterableToArrayLimit(arr, i) {
     return _arr;
   }
 }
-function _regeneratorRuntime() {
-  _regeneratorRuntime = function () {
-    return exports;
-  };
-  var exports = {},
-    Op = Object.prototype,
-    hasOwn = Op.hasOwnProperty,
-    defineProperty = Object.defineProperty || function (obj, key, desc) {
-      obj[key] = desc.value;
-    },
-    $Symbol = "function" == typeof Symbol ? Symbol : {},
-    iteratorSymbol = $Symbol.iterator || "@@iterator",
-    asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
-    toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-  function define(obj, key, value) {
-    return Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: !0,
-      configurable: !0,
-      writable: !0
-    }), obj[key];
-  }
-  try {
-    define({}, "");
-  } catch (err) {
-    define = function (obj, key, value) {
-      return obj[key] = value;
-    };
-  }
-  function wrap(innerFn, outerFn, self, tryLocsList) {
-    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator,
-      generator = Object.create(protoGenerator.prototype),
-      context = new Context(tryLocsList || []);
-    return defineProperty(generator, "_invoke", {
-      value: makeInvokeMethod(innerFn, self, context)
-    }), generator;
-  }
-  function tryCatch(fn, obj, arg) {
-    try {
-      return {
-        type: "normal",
-        arg: fn.call(obj, arg)
-      };
-    } catch (err) {
-      return {
-        type: "throw",
-        arg: err
-      };
-    }
-  }
-  exports.wrap = wrap;
-  var ContinueSentinel = {};
-  function Generator() {}
-  function GeneratorFunction() {}
-  function GeneratorFunctionPrototype() {}
-  var IteratorPrototype = {};
-  define(IteratorPrototype, iteratorSymbol, function () {
-    return this;
-  });
-  var getProto = Object.getPrototypeOf,
-    NativeIteratorPrototype = getProto && getProto(getProto(values([])));
-  NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype);
-  var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype);
-  function defineIteratorMethods(prototype) {
-    ["next", "throw", "return"].forEach(function (method) {
-      define(prototype, method, function (arg) {
-        return this._invoke(method, arg);
-      });
-    });
-  }
-  function AsyncIterator(generator, PromiseImpl) {
-    function invoke(method, arg, resolve, reject) {
-      var record = tryCatch(generator[method], generator, arg);
-      if ("throw" !== record.type) {
-        var result = record.arg,
-          value = result.value;
-        return value && "object" == typeof value && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) {
-          invoke("next", value, resolve, reject);
-        }, function (err) {
-          invoke("throw", err, resolve, reject);
-        }) : PromiseImpl.resolve(value).then(function (unwrapped) {
-          result.value = unwrapped, resolve(result);
-        }, function (error) {
-          return invoke("throw", error, resolve, reject);
-        });
-      }
-      reject(record.arg);
-    }
-    var previousPromise;
-    defineProperty(this, "_invoke", {
-      value: function (method, arg) {
-        function callInvokeWithMethodAndArg() {
-          return new PromiseImpl(function (resolve, reject) {
-            invoke(method, arg, resolve, reject);
-          });
-        }
-        return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
-      }
-    });
-  }
-  function makeInvokeMethod(innerFn, self, context) {
-    var state = "suspendedStart";
-    return function (method, arg) {
-      if ("executing" === state) throw new Error("Generator is already running");
-      if ("completed" === state) {
-        if ("throw" === method) throw arg;
-        return doneResult();
-      }
-      for (context.method = method, context.arg = arg;;) {
-        var delegate = context.delegate;
-        if (delegate) {
-          var delegateResult = maybeInvokeDelegate(delegate, context);
-          if (delegateResult) {
-            if (delegateResult === ContinueSentinel) continue;
-            return delegateResult;
-          }
-        }
-        if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) {
-          if ("suspendedStart" === state) throw state = "completed", context.arg;
-          context.dispatchException(context.arg);
-        } else "return" === context.method && context.abrupt("return", context.arg);
-        state = "executing";
-        var record = tryCatch(innerFn, self, context);
-        if ("normal" === record.type) {
-          if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue;
-          return {
-            value: record.arg,
-            done: context.done
-          };
-        }
-        "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg);
-      }
-    };
-  }
-  function maybeInvokeDelegate(delegate, context) {
-    var methodName = context.method,
-      method = delegate.iterator[methodName];
-    if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator.return && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel;
-    var record = tryCatch(method, delegate.iterator, context.arg);
-    if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel;
-    var info = record.arg;
-    return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel);
-  }
-  function pushTryEntry(locs) {
-    var entry = {
-      tryLoc: locs[0]
-    };
-    1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry);
-  }
-  function resetTryEntry(entry) {
-    var record = entry.completion || {};
-    record.type = "normal", delete record.arg, entry.completion = record;
-  }
-  function Context(tryLocsList) {
-    this.tryEntries = [{
-      tryLoc: "root"
-    }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
-  }
-  function values(iterable) {
-    if (iterable) {
-      var iteratorMethod = iterable[iteratorSymbol];
-      if (iteratorMethod) return iteratorMethod.call(iterable);
-      if ("function" == typeof iterable.next) return iterable;
-      if (!isNaN(iterable.length)) {
-        var i = -1,
-          next = function next() {
-            for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
-            return next.value = undefined, next.done = !0, next;
-          };
-        return next.next = next;
-      }
-    }
-    return {
-      next: doneResult
-    };
-  }
-  function doneResult() {
-    return {
-      value: undefined,
-      done: !0
-    };
-  }
-  return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", {
-    value: GeneratorFunctionPrototype,
-    configurable: !0
-  }), defineProperty(GeneratorFunctionPrototype, "constructor", {
-    value: GeneratorFunction,
-    configurable: !0
-  }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) {
-    var ctor = "function" == typeof genFun && genFun.constructor;
-    return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name));
-  }, exports.mark = function (genFun) {
-    return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun;
-  }, exports.awrap = function (arg) {
-    return {
-      __await: arg
-    };
-  }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
-    return this;
-  }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) {
-    void 0 === PromiseImpl && (PromiseImpl = Promise);
-    var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl);
-    return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) {
-      return result.done ? result.value : iter.next();
-    });
-  }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () {
-    return this;
-  }), define(Gp, "toString", function () {
-    return "[object Generator]";
-  }), exports.keys = function (val) {
-    var object = Object(val),
-      keys = [];
-    for (var key in object) keys.push(key);
-    return keys.reverse(), function next() {
-      for (; keys.length;) {
-        var key = keys.pop();
-        if (key in object) return next.value = key, next.done = !1, next;
-      }
-      return next.done = !0, next;
-    };
-  }, exports.values = values, Context.prototype = {
-    constructor: Context,
-    reset: function (skipTempReset) {
-      if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined);
-    },
-    stop: function () {
-      this.done = !0;
-      var rootRecord = this.tryEntries[0].completion;
-      if ("throw" === rootRecord.type) throw rootRecord.arg;
-      return this.rval;
-    },
-    dispatchException: function (exception) {
-      if (this.done) throw exception;
-      var context = this;
-      function handle(loc, caught) {
-        return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught;
-      }
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i],
-          record = entry.completion;
-        if ("root" === entry.tryLoc) return handle("end");
-        if (entry.tryLoc <= this.prev) {
-          var hasCatch = hasOwn.call(entry, "catchLoc"),
-            hasFinally = hasOwn.call(entry, "finallyLoc");
-          if (hasCatch && hasFinally) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
-          } else if (hasCatch) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
-          } else {
-            if (!hasFinally) throw new Error("try statement without catch or finally");
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
-          }
-        }
-      }
-    },
-    abrupt: function (type, arg) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
-          var finallyEntry = entry;
-          break;
-        }
-      }
-      finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null);
-      var record = finallyEntry ? finallyEntry.completion : {};
-      return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record);
-    },
-    complete: function (record, afterLoc) {
-      if ("throw" === record.type) throw record.arg;
-      return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel;
-    },
-    finish: function (finallyLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel;
-      }
-    },
-    catch: function (tryLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc === tryLoc) {
-          var record = entry.completion;
-          if ("throw" === record.type) {
-            var thrown = record.arg;
-            resetTryEntry(entry);
-          }
-          return thrown;
-        }
-      }
-      throw new Error("illegal catch attempt");
-    },
-    delegateYield: function (iterable, resultName, nextLoc) {
-      return this.delegate = {
-        iterator: values(iterable),
-        resultName: resultName,
-        nextLoc: nextLoc
-      }, "next" === this.method && (this.arg = undefined), ContinueSentinel;
-    }
-  }, exports;
-}
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-  try {
-    var info = gen[key](arg);
-    var value = info.value;
-  } catch (error) {
-    reject(error);
-    return;
-  }
-  if (info.done) {
-    resolve(value);
-  } else {
-    Promise.resolve(value).then(_next, _throw);
-  }
-}
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-      args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-      function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-      }
-      function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-      }
-      _next(undefined);
-    });
-  };
-}
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -655,9 +324,6 @@ var isPlainObject = function isPlainObject(param) {
   isFloat = function isFloat(param) {
     return isNumber(param) && parseFloat(param) === param;
   },
-  isUnsignedInt = function isUnsignedInt(param) {
-    return param >= 0 && isInt(param);
-  },
   isNumeric = function isNumeric(param) {
     return isInt(param) || isFloat(param) || RE_NUMERIC.test(param);
   },
@@ -701,8 +367,59 @@ function runAsync(callback) {
     }, 0);
   }
 }
+function uuidv4() {
+  var uuid = "",
+    i,
+    random;
+  for (i = 0; i < 32; i++) {
+    random = Math.random() * 16 | 0;
+    if (i == 8 || i == 12 || i == 16 || i == 20) {
+      uuid += "-";
+    }
+    uuid += (i == 12 ? 4 : i == 16 ? random & 3 | 8 : random).toString(16);
+  }
+  return uuid;
+}
 function isHTML(param) {
   return isString(param) && param.startsWith('<') && param.endsWith('>');
+}
+function decode$1(value) {
+  if (isUndef(value) || isNull(value) || value === '') {
+    return null;
+  }
+  if (value.startsWith('{') && value.endsWith('}') || value.startsWith('[') && value.endsWith(']') || isNumeric(value) || value === 'true' || value === 'false') {
+    return JSON$2.parse(value);
+  }
+  return value;
+}
+function encode$1(value) {
+  if (!isString(value)) {
+    return JSON$2.stringify(value);
+  }
+  return value;
+}
+function parseDataElement(data) {
+  var _data;
+  var root = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+  var result = [];
+  (_data = data) !== null && _data !== void 0 ? _data : data = {};
+  var _loop = function _loop(key) {
+    var value = data[key];
+    if (isPlainObject(value)) {
+      result = result.concat(parseDataElement(value, false).map(function (item) {
+        return [key + '-' + item[0], item[1]];
+      }));
+      return "continue";
+    }
+    result.push([key, encode$1(value)]);
+  };
+  for (var key in data) {
+    var _ret = _loop(key);
+    if (_ret === "continue") continue;
+  }
+  return result.map(function (item) {
+    return root ? ['data-' + item[0], item[1]] : item;
+  });
 }
 
 /**
@@ -720,7 +437,7 @@ function createElement(tag) {
   if (typeof tag !== 'string') {
     throw new TypeError('tag must be a String');
   }
-  if (typeof params === 'string' || params instanceof Element || params instanceof NodeList || Array.isArray(params)) {
+  if (typeof params === 'string' || params instanceof Element || isArray(params)) {
     html = params;
     params = {};
   }
@@ -733,16 +450,27 @@ function createElement(tag) {
       html = value;
       continue;
     }
+    if (attr === 'data') {
+      if (isPlainObject(value)) {
+        parseDataElement(value).forEach(function (item) {
+          var _item = _slicedToArray(item, 2),
+            key = _item[0],
+            value = _item[1];
+          elem.setAttribute(key, value);
+        });
+      }
+      continue;
+    }
     if (typeof value === 'string') {
       elem.setAttribute(attr, value);
     } else {
       elem[attr] = value;
     }
   }
-  if (html instanceof Element) {
+  if (html instanceof Element || isString(html)) {
     html = [html];
   }
-  if (Array.isArray(html) || html instanceof NodeList) {
+  if (Array.isArray(html)) {
     html.forEach(function (item) {
       if (item instanceof Element) {
         elem.appendChild(item);
@@ -750,8 +478,6 @@ function createElement(tag) {
         elem.innerHTML += item;
       }
     });
-  } else if (typeof html === 'string') {
-    elem.innerHTML = html;
   }
   return elem;
 }
@@ -761,8 +487,9 @@ function createElement(tag) {
  * @returns {String}
  */
 function uniqid() {
-  uniqid.values = uniqid.values || [];
+  var _uniqid$values;
   var value;
+  (_uniqid$values = uniqid.values) !== null && _uniqid$values !== void 0 ? _uniqid$values : uniqid.values = [];
   while (!value || uniqid.values.includes(value)) {
     value = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
   }
@@ -781,22 +508,20 @@ function html2element(html) {
       content = template.content;
     if (content.childNodes.length === 0) {
       return;
-    }
-    if (content.childNodes.length > 1) {
+    } else if (content.childNodes.length > 1) {
       return _toConsumableArray(content.childNodes);
-    } else {
-      return content.childNodes[0];
     }
+    return content.childNodes[0];
   }
 }
 
-var _listeners$1 = /*#__PURE__*/new WeakMap();
+var _listeners = /*#__PURE__*/new WeakMap();
 var _useasync = /*#__PURE__*/new WeakMap();
 var EventManager = /*#__PURE__*/function () {
   function EventManager() {
     var useasync = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
     _classCallCheck(this, EventManager);
-    _classPrivateFieldInitSpec(this, _listeners$1, {
+    _classPrivateFieldInitSpec(this, _listeners, {
       writable: true,
       value: void 0
     });
@@ -804,7 +529,7 @@ var EventManager = /*#__PURE__*/function () {
       writable: true,
       value: void 0
     });
-    _classPrivateFieldSet(this, _listeners$1, []);
+    _classPrivateFieldSet(this, _listeners, []);
     _classPrivateFieldSet(this, _useasync, useasync);
   }
   _createClass(EventManager, [{
@@ -813,7 +538,7 @@ var EventManager = /*#__PURE__*/function () {
       if (!isString(type) || type.includes(' ')) {
         throw new TypeError('Invalid event type, not a String or contains spaces.');
       }
-      return _classPrivateFieldGet(this, _listeners$1).filter(function (item) {
+      return _classPrivateFieldGet(this, _listeners).filter(function (item) {
         return item.type === type;
       }).map(function (item) {
         return item.listener;
@@ -831,7 +556,7 @@ var EventManager = /*#__PURE__*/function () {
         throw new TypeError('Invalid listener, not a function');
       }
       type.split(/\s+/).forEach(function (type) {
-        _classPrivateFieldGet(_this, _listeners$1).push({
+        _classPrivateFieldGet(_this, _listeners).push({
           type: type,
           listener: listener,
           once: once === true
@@ -852,7 +577,7 @@ var EventManager = /*#__PURE__*/function () {
         throw new TypeError('Invalid event type, not a String.');
       }
       type.split(/\s+/).forEach(function (type) {
-        _classPrivateFieldSet(_this2, _listeners$1, _classPrivateFieldGet(_this2, _listeners$1).filter(function (item) {
+        _classPrivateFieldSet(_this2, _listeners, _classPrivateFieldGet(_this2, _listeners).filter(function (item) {
           if (type === item.type) {
             if (listener === item.listener || !listener) {
               return false;
@@ -878,7 +603,7 @@ var EventManager = /*#__PURE__*/function () {
       if (!isString(type) && type instanceof Event === false) {
         throw new TypeError('Invalid event type, not a String|Event.');
       }
-      var listeners = Array.from(_classPrivateFieldGet(this, _listeners$1)),
+      var listeners = Array.from(_classPrivateFieldGet(this, _listeners)),
         types = [];
       type.split(/\s+/).forEach(function (type) {
         if (types.includes(type)) {
@@ -972,409 +697,60 @@ var _events = {
 };
 
 /**
- * Checks for changes in the datastore
+ * The default DataStore interface
  */
-var _store = /*#__PURE__*/new WeakMap();
-var _key = /*#__PURE__*/new WeakMap();
-var _listeners = /*#__PURE__*/new WeakMap();
-var _id = /*#__PURE__*/new WeakMap();
-var _interval$1 = /*#__PURE__*/new WeakMap();
-var _update$1 = /*#__PURE__*/new WeakSet();
-var ValueChangeListener = /*#__PURE__*/function () {
-  function ValueChangeListener(_store2, key) {
-    var interval = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 100;
-    _classCallCheck(this, ValueChangeListener);
-    _classPrivateMethodInitSpec(this, _update$1);
-    _classPrivateFieldInitSpec(this, _store, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _key, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _listeners, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _id, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldInitSpec(this, _interval$1, {
-      writable: true,
-      value: void 0
-    });
-    if (_store2 instanceof DataStore === false) {
-      throw new TypeError('invalid storage provided');
-    }
-    if (isEmpty(key) || !isString(key)) {
-      throw new TypeError('Key is not a non empty String.');
-    }
-    if (!isUnsignedInt(interval)) {
-      throw new TypeError('Interval can only be a positive integer.');
-    }
-    _classPrivateFieldSet(this, _interval$1, interval);
-    _classPrivateFieldSet(this, _store, _store2);
-    _classPrivateFieldSet(this, _key, key);
-    _classPrivateFieldSet(this, _id, null);
-    _classPrivateFieldSet(this, _listeners, new Set());
+var DataStore = /*#__PURE__*/function () {
+  function DataStore() {
+    _classCallCheck(this, DataStore);
   }
-  _createClass(ValueChangeListener, [{
-    key: "started",
-    get: function get() {
-      return !isNull(_classPrivateFieldGet(this, _id));
+  _createClass(DataStore, [{
+    key: "key",
+    value: function key(name) {
+      return name;
     }
   }, {
-    key: "length",
-    get: function get() {
-      return _classPrivateFieldGet(this, _listeners).size;
+    key: "has",
+    value: function has(name) {
+      return this.get(name, null) !== null;
     }
   }, {
-    key: "add",
-    value: function add(listener) {
-      if (!isFunction(listener)) {
-        throw new TypeError('Listener is not a Function.');
+    key: "multiset",
+    value: function multiset(values) {
+      if (!isPlainObject(values) || isEmpty(values)) {
+        throw new TypeError('values is not a non empty Object');
       }
-      _classPrivateFieldGet(this, _listeners).add(listener);
-      _classPrivateMethodGet(this, _update$1, _update2$1).call(this);
+      for (var name in values) {
+        var value = values[name];
+        this.set(name, value);
+      }
     }
   }, {
-    key: "delete",
-    value: function _delete(listener) {
-      if (!isFunction(listener)) {
-        throw new TypeError('Listener is not a Function.');
-      }
-      _classPrivateFieldGet(this, _listeners).delete(listener);
-      _classPrivateMethodGet(this, _update$1, _update2$1).call(this);
+    key: "remove",
+    value: function remove(name) {
+      this.set(name, null);
+    }
+  }, {
+    key: "set",
+    value: function set(name, value) {
+      throw new Error('set() not implemented');
+    }
+  }, {
+    key: "get",
+    value: function get(name) {
+      throw new Error('get() not implemented');
     }
   }, {
     key: "clear",
     value: function clear() {
-      _classPrivateFieldGet(this, _listeners).clear();
-      _classPrivateMethodGet(this, _update$1, _update2$1).call(this);
+      throw new Error('clear() not implemented');
     }
-  }]);
-  return ValueChangeListener;
-}();
-/**
- * The default DataStore interface
- * Implements ValueChangeListener
- */
-function _update2$1() {
-  return _update3$1.apply(this, arguments);
-}
-function _update3$1() {
-  _update3$1 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8() {
-    var _this = this;
-    var store, prev;
-    return _regeneratorRuntime().wrap(function _callee8$(_context8) {
-      while (1) switch (_context8.prev = _context8.next) {
-        case 0:
-          if (!(this.length > 0 && !this.started)) {
-            _context8.next = 8;
-            break;
-          }
-          store = _classPrivateFieldGet(this, _store);
-          _context8.next = 4;
-          return store.get(_classPrivateFieldGet(this, _key));
-        case 4:
-          prev = _context8.sent;
-          _classPrivateFieldSet(this, _id, setInterval( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7() {
-            var _iterator, _step, listener;
-            return _regeneratorRuntime().wrap(function _callee7$(_context7) {
-              while (1) switch (_context7.prev = _context7.next) {
-                case 0:
-                  _context7.next = 2;
-                  return store.get(_classPrivateFieldGet(_this, _key));
-                case 2:
-                  value = _context7.sent;
-                  if (value !== prev) {
-                    _iterator = _createForOfIteratorHelper(_classPrivateFieldGet(_this, _listeners));
-                    try {
-                      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-                        listener = _step.value;
-                        runAsync(listener, value, _classPrivateFieldGet(_this, _key), store);
-                      }
-                    } catch (err) {
-                      _iterator.e(err);
-                    } finally {
-                      _iterator.f();
-                    }
-                  }
-                case 4:
-                case "end":
-                  return _context7.stop();
-              }
-            }, _callee7);
-          })), _classPrivateFieldGet(this, _interval$1)));
-          _context8.next = 9;
-          break;
-        case 8:
-          if (this.started) {
-            clearInterval(_classPrivateFieldGet(this, _id));
-            _classPrivateFieldSet(this, _id, null);
-          }
-        case 9:
-        case "end":
-          return _context8.stop();
-      }
-    }, _callee8, this);
-  }));
-  return _update3$1.apply(this, arguments);
-}
-var _listeners2 = /*#__PURE__*/new WeakMap();
-var _getListeners = /*#__PURE__*/new WeakSet();
-var DataStore = /*#__PURE__*/function () {
-  function DataStore() {
-    _classCallCheck(this, DataStore);
-    _classPrivateMethodInitSpec(this, _getListeners);
-    _classPrivateFieldInitSpec(this, _listeners2, {
-      writable: true,
-      value: void 0
-    });
-    _classPrivateFieldSet(this, _listeners2, {});
-  }
-  _createClass(DataStore, [{
-    key: "addValueChangeListener",
-    value: function addValueChangeListener(name, listener) {
-      if (!isFunction(listener)) {
-        throw new TypeError('Listener is not a Function.');
-      }
-      _classPrivateMethodGet(this, _getListeners, _getListeners2).call(this, name).add(listener);
-    }
-  }, {
-    key: "removeValueChangeListener",
-    value: function removeValueChangeListener(name, listener) {
-      var listeners = _classPrivateMethodGet(this, _getListeners, _getListeners2).call(this, name);
-      if (!listener) {
-        listeners.clear();
-      } else if (isFunction(listener)) {
-        listeners.delete(listener);
-      }
-    }
-  }, {
-    key: "has",
-    value: function () {
-      var _has = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(name) {
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
-            case 0:
-              _context.next = 2;
-              return this.get(name, null);
-            case 2:
-              _context.t0 = _context.sent;
-              return _context.abrupt("return", _context.t0 !== null);
-            case 4:
-            case "end":
-              return _context.stop();
-          }
-        }, _callee, this);
-      }));
-      function has(_x) {
-        return _has.apply(this, arguments);
-      }
-      return has;
-    }()
-  }, {
-    key: "multiset",
-    value: function () {
-      var _multiset = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(values) {
-        var names, promises, i, name, _value;
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
-            case 0:
-              if (!(!isPlainObject(values) || isEmpty(values))) {
-                _context2.next = 2;
-                break;
-              }
-              throw new TypeError('values is not a non empty Object');
-            case 2:
-              names = Object.keys(values), promises = [];
-              for (i = 0; i < names.length; i++) {
-                name = names[i], _value = values[name];
-                promises.push(this.set(name, _value));
-              }
-              _context2.next = 6;
-              return Promise.all(promises).then(function () {
-                return values;
-              });
-            case 6:
-              return _context2.abrupt("return", _context2.sent);
-            case 7:
-            case "end":
-              return _context2.stop();
-          }
-        }, _callee2, this);
-      }));
-      function multiset(_x2) {
-        return _multiset.apply(this, arguments);
-      }
-      return multiset;
-    }()
-  }, {
-    key: "remove",
-    value: function () {
-      var _remove = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(name) {
-        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-          while (1) switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.next = 2;
-              return this.set(name, null);
-            case 2:
-              return _context3.abrupt("return", _context3.sent);
-            case 3:
-            case "end":
-              return _context3.stop();
-          }
-        }, _callee3, this);
-      }));
-      function remove(_x3) {
-        return _remove.apply(this, arguments);
-      }
-      return remove;
-    }()
-  }, {
-    key: "set",
-    value: function () {
-      var _set = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(name, value) {
-        return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-          while (1) switch (_context4.prev = _context4.next) {
-            case 0:
-              throw new Error('set() not implemented');
-            case 1:
-            case "end":
-              return _context4.stop();
-          }
-        }, _callee4);
-      }));
-      function set(_x4, _x5) {
-        return _set.apply(this, arguments);
-      }
-      return set;
-    }()
-  }, {
-    key: "get",
-    value: function () {
-      var _get = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(name) {
-        return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-          while (1) switch (_context5.prev = _context5.next) {
-            case 0:
-              throw new Error('get() not implemented');
-            case 2:
-            case "end":
-              return _context5.stop();
-          }
-        }, _callee5);
-      }));
-      function get(_x6) {
-        return _get.apply(this, arguments);
-      }
-      return get;
-    }()
-  }, {
-    key: "clear",
-    value: function () {
-      var _clear = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
-        return _regeneratorRuntime().wrap(function _callee6$(_context6) {
-          while (1) switch (_context6.prev = _context6.next) {
-            case 0:
-              throw new Error('clear() not implemented');
-            case 1:
-            case "end":
-              return _context6.stop();
-          }
-        }, _callee6);
-      }));
-      function clear() {
-        return _clear.apply(this, arguments);
-      }
-      return clear;
-    }()
   }]);
   return DataStore;
 }();
-function _getListeners2(name) {
-  var _classPrivateFieldGet2, _classPrivateFieldGet3;
-  if (isEmpty(name) || !isString(name)) {
-    throw new TypeError('Name is not a non empty String.');
-  }
-  return (_classPrivateFieldGet3 = (_classPrivateFieldGet2 = _classPrivateFieldGet(this, _listeners2))[name]) !== null && _classPrivateFieldGet3 !== void 0 ? _classPrivateFieldGet3 : _classPrivateFieldGet2[name] = new ValueChangeListener(this, name);
-}
 
-// Unique ID creation requires a high quality random # generator. In the browser we therefore
-// require the crypto API and do not support built-in fallback to lower quality random number
-// generators (like Math.random()).
-var getRandomValues;
-var rnds8 = new Uint8Array(16);
-function rng() {
-  // lazy load so that environments that need to polyfill have a chance to do so
-  if (!getRandomValues) {
-    // getRandomValues needs to be invoked in a context where "this" is a Crypto implementation.
-    getRandomValues = typeof crypto !== 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto);
-    if (!getRandomValues) {
-      throw new Error('crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported');
-    }
-  }
-  return getRandomValues(rnds8);
-}
-
-/**
- * Convert array of 16 byte values to UUID string format of the form:
- * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
- */
-
-var byteToHex = [];
-for (var i = 0; i < 256; ++i) {
-  byteToHex.push((i + 0x100).toString(16).slice(1));
-}
-function unsafeStringify(arr) {
-  var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-  // Note: Be careful editing this code!  It's been tuned for performance
-  // and works in ways you may not expect. See https://github.com/uuidjs/uuid/pull/434
-  return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + '-' + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + '-' + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + '-' + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + '-' + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
-}
-
-var randomUUID = typeof crypto !== 'undefined' && crypto.randomUUID && crypto.randomUUID.bind(crypto);
-var native = {
-  randomUUID: randomUUID
-};
-
-function v4(options, buf, offset) {
-  if (native.randomUUID && !buf && !options) {
-    return native.randomUUID();
-  }
-  options = options || {};
-  var rnds = options.random || (options.rng || rng)(); // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-
-  rnds[6] = rnds[6] & 0x0f | 0x40;
-  rnds[8] = rnds[8] & 0x3f | 0x80; // Copy bytes to buffer, if provided
-
-  if (buf) {
-    offset = offset || 0;
-    for (var i = 0; i < 16; ++i) {
-      buf[offset + i] = rnds[i];
-    }
-    return buf;
-  }
-  return unsafeStringify(rnds);
-}
-
-/**
- * Reads or generates UUID for Storage prefix
- * 
- * @returns String
- */
-function __UUID__() {
-  var key = 'NGSOFT:WebStorage:UUID',
-    result = localStorage.getItem(key);
-  if (result === null) {
-    localStorage.setItem(key, result = v4());
-  }
-  return result;
-}
 var _storage = /*#__PURE__*/new WeakMap();
 var _prefix = /*#__PURE__*/new WeakMap();
+var _generatePrefix = /*#__PURE__*/new WeakSet();
 var WebStorage = /*#__PURE__*/function (_DataStore) {
   _inherits(WebStorage, _DataStore);
   var _super = _createSuper(WebStorage);
@@ -1383,6 +759,7 @@ var WebStorage = /*#__PURE__*/function (_DataStore) {
     var _this;
     _classCallCheck(this, WebStorage);
     _this = _super.call(this);
+    _classPrivateMethodInitSpec(_assertThisInitialized(_this), _generatePrefix);
     _classPrivateFieldInitSpec(_assertThisInitialized(_this), _storage, {
       writable: true,
       value: void 0
@@ -1396,118 +773,70 @@ var WebStorage = /*#__PURE__*/function (_DataStore) {
       throw new TypeError('webstorage not an instance of Storage');
     }
     _classPrivateFieldSet(_assertThisInitialized(_this), _storage, webstorage);
-    _classPrivateFieldSet(_assertThisInitialized(_this), _prefix, (_prefix2 = prefix) !== null && _prefix2 !== void 0 ? _prefix2 : prefix = __UUID__() + ':');
+    (_prefix2 = prefix) !== null && _prefix2 !== void 0 ? _prefix2 : prefix = _classPrivateMethodGet(_assertThisInitialized(_this), _generatePrefix, _generatePrefix2).call(_assertThisInitialized(_this));
+    if (!isEmpty(prefix) && !prefix.endsWith(':')) {
+      prefix += ':';
+    }
+    _classPrivateFieldSet(_assertThisInitialized(_this), _prefix, prefix);
     return _this;
   }
   _createClass(WebStorage, [{
+    key: "key",
+    value: function key(name) {
+      return _classPrivateFieldGet(this, _prefix) + name;
+    }
+  }, {
     key: "get",
-    value: function () {
-      var _get = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(name) {
-        var defaultValue,
-          value,
-          _args = arguments;
-        return _regeneratorRuntime().wrap(function _callee$(_context) {
-          while (1) switch (_context.prev = _context.next) {
-            case 0:
-              defaultValue = _args.length > 1 && _args[1] !== undefined ? _args[1] : null;
-              if (!(!isString(name) || isEmpty(name))) {
-                _context.next = 3;
-                break;
-              }
-              throw new TypeError('name is not a non empty string');
-            case 3:
-              value = _classPrivateFieldGet(this, _storage).getItem(_classPrivateFieldGet(this, _prefix) + name);
-              if (isString(value)) {
-                _context.next = 6;
-                break;
-              }
-              return _context.abrupt("return", defaultValue);
-            case 6:
-              return _context.abrupt("return", JSON$2.parse(value));
-            case 7:
-            case "end":
-              return _context.stop();
-          }
-        }, _callee, this);
-      }));
-      function get(_x) {
-        return _get.apply(this, arguments);
+    value: function get(name) {
+      var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+      if (!isString(name) || isEmpty(name)) {
+        throw new TypeError('name is not a non empty string');
       }
-      return get;
-    }()
+      var value = _classPrivateFieldGet(this, _storage).getItem(this.key(name));
+      if (!isString(value)) {
+        return defaultValue;
+      }
+      return JSON$2.parse(value);
+    }
   }, {
     key: "set",
-    value: function () {
-      var _set = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(name, value) {
-        return _regeneratorRuntime().wrap(function _callee2$(_context2) {
-          while (1) switch (_context2.prev = _context2.next) {
-            case 0:
-              if (!(!isString(name) || isEmpty(name))) {
-                _context2.next = 2;
-                break;
-              }
-              throw new TypeError('name is not a non empty string');
-            case 2:
-              if (!isUndef(value)) {
-                _context2.next = 4;
-                break;
-              }
-              throw new TypeError('value is undefined');
-            case 4:
-              if (value === null) {
-                _classPrivateFieldGet(this, _storage).removeItem(_classPrivateFieldGet(this, _prefix) + name);
-              } else {
-                _classPrivateFieldGet(this, _storage).setItem(_classPrivateFieldGet(this, _prefix) + name, JSON$2.stringify(value));
-              }
-              return _context2.abrupt("return", {
-                name: name,
-                value: value
-              });
-            case 6:
-            case "end":
-              return _context2.stop();
-          }
-        }, _callee2, this);
-      }));
-      function set(_x2, _x3) {
-        return _set.apply(this, arguments);
+    value: function set(name, value) {
+      if (!isString(name) || isEmpty(name)) {
+        throw new TypeError('name is not a non empty string');
       }
-      return set;
-    }()
+      if (isUndef(value)) {
+        throw new TypeError('value is undefined');
+      }
+      if (value === null) {
+        _classPrivateFieldGet(this, _storage).removeItem(this.key(name));
+      } else {
+        _classPrivateFieldGet(this, _storage).setItem(this.key(name), JSON$2.stringify(value));
+      }
+    }
   }, {
     key: "clear",
-    value: function () {
-      var _clear = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
-        var prefix, store, promises, keys, i, name;
-        return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-          while (1) switch (_context3.prev = _context3.next) {
-            case 0:
-              prefix = _classPrivateFieldGet(this, _prefix), store = _classPrivateFieldGet(this, _storage), promises = [], keys = [];
-              for (i = 0; i < store.length; i++) {
-                name = store.key(i);
-                if (name.indexOf(prefix) === 0 || isEmpty(prefix)) {
-                  name = name.substring(prefix.length);
-                  keys.push(name);
-                  promises.push(this.remove(name));
-                }
-              }
-              return _context3.abrupt("return", Promise.all(promises).then(function () {
-                return keys;
-              }));
-            case 3:
-            case "end":
-              return _context3.stop();
-          }
-        }, _callee3, this);
-      }));
-      function clear() {
-        return _clear.apply(this, arguments);
+    value: function clear() {
+      var prefix = _classPrivateFieldGet(this, _prefix),
+        store = _classPrivateFieldGet(this, _storage);
+      for (var i = 0; i < store.length; i++) {
+        var name = store.key(i);
+        if (name.indexOf(prefix) === 0 || isEmpty(prefix)) {
+          name = name.substring(prefix.length);
+          this.remove(name);
+        }
       }
-      return clear;
-    }()
+    }
   }]);
   return WebStorage;
 }(DataStore);
+function _generatePrefix2() {
+  var key = 'NGSOFT:WebStorage:UUID',
+    result = localStorage.getItem(key);
+  if (isNull(result)) {
+    localStorage.setItem(key, result = uuidv4());
+  }
+  return result;
+}
 new WebStorage(sessionStorage);
   var LocalStore = new WebStorage(localStorage);
 
@@ -1765,13 +1094,109 @@ var RangeSlider = /*#__PURE__*/function () {
   return RangeSlider;
 }();
 
+var RadioElement = /*#__PURE__*/function () {
+  function RadioElement(id, name, value) {
+    _classCallCheck(this, RadioElement);
+    _defineProperty(this, "element", void 0);
+    _defineProperty(this, "elements", void 0);
+    var label = createElement('label', {
+        for: id
+      }),
+      input = createElement('<input type="radio">', {
+        id: id,
+        name: name,
+        value: encode$1(value)
+      }),
+      root = createElement('span', {
+        class: "color-picker d-inline-block mx-3"
+      }, [input, label]);
+    this.elements = {
+      root: root,
+      label: label,
+      input: input
+    };
+    this.element = root;
+  }
+  _createClass(RadioElement, [{
+    key: "value",
+    get: function get() {
+      return decode$1(this.elements.input.value);
+    }
+  }, {
+    key: "name",
+    get: function get() {
+      return this.elements.input.getAttribute('name');
+    }
+  }, {
+    key: "id",
+    get: function get() {
+      return this.elements.input.getAttribute('id');
+    }
+  }, {
+    key: "checked",
+    get: function get() {
+      return this.elements.input.checked === true;
+    },
+    set: function set(checked) {
+      this.elements.input.checked = checked === true;
+    }
+  }]);
+  return RadioElement;
+}();
+var ThemeSelector = /*#__PURE__*/function () {
+  function ThemeSelector(themes, value) {
+    _classCallCheck(this, ThemeSelector);
+    _defineProperty(this, "elements", void 0);
+    _defineProperty(this, "element", void 0);
+    if (!isArray(themes)) {
+      throw new TypeError('themes must be an Array');
+    }
+    themes = themes.map(function (value) {
+      return new RadioElement('theme' + value, 'theme', value);
+    });
+    var root = createElement('div', {
+      class: 'theme-selector',
+      id: 'themeFormElement'
+    }, [createElement('<div class="form-label"/>', 'Theme'), createElement('<div class="d-flex">', themes.map(function (t) {
+      return t.element;
+    }))]);
+    this.elements = themes;
+    this.element = root;
+    themes.forEach(function (theme) {
+      if (theme.value === value) {
+        theme.checked = true;
+      }
+    });
+  }
+  _createClass(ThemeSelector, [{
+    key: "value",
+    get: function get() {
+      var _iterator = _createForOfIteratorHelper(this.elements),
+        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var theme = _step.value;
+          if (theme.checked) {
+            return theme.value;
+          }
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+      return -1;
+    }
+  }]);
+  return ThemeSelector;
+}();
+
 var defaults = {
     difficulty: 4,
     timeout: 0,
     lives: 0,
     matched: 1
-  },
-  keys = Object.keys(defaults);
+  };
 var Settings = /*#__PURE__*/function () {
   function Settings() {
     _classCallCheck(this, Settings);
@@ -1779,72 +1204,57 @@ var Settings = /*#__PURE__*/function () {
   _createClass(Settings, null, [{
     key: "difficulty",
     get: function get() {
-      return new Promise(function (resolve) {
-        LocalStore.get('difficulty', defaults.difficulty).then(resolve);
-      });
+      return LocalStore.get('difficulty', defaults.difficulty);
     },
     set: function set(difficulty) {
-      return new Promise(function (resolve) {
-        LocalStore.set('difficulty', difficulty).then(resolve);
-      });
+      LocalStore.set('difficulty', difficulty);
     }
   }, {
     key: "timeout",
     get: function get() {
-      return new Promise(function (resolve) {
-        LocalStore.get('timeout', defaults.timeout).then(resolve);
-      });
+      return LocalStore.get('timeout', defaults.timeout);
     },
     set: function set(timeout) {
-      return new Promise(function (resolve) {
-        LocalStore.set('timeout', timeout).then(resolve);
-      });
+      LocalStore.set('timeout', timeout);
     }
   }, {
     key: "lives",
     get: function get() {
-      return new Promise(function (resolve) {
-        LocalStore.get('lives', defaults.lives).then(resolve);
-      });
+      return LocalStore.get('lives', defaults.lives);
     },
     set: function set(lives) {
-      return new Promise(function (resolve) {
-        LocalStore.set('lives', lives).then(resolve);
-      });
+      LocalStore.set('lives', lives);
     }
   }, {
     key: "matched",
     get: function get() {
-      return new Promise(function (resolve) {
-        LocalStore.get('matched', defaults.matched).then(resolve);
-      });
+      return LocalStore.get('matched', defaults.matched);
     },
     set: function set(matched) {
-      return new Promise(function (resolve) {
-        LocalStore.set('matched', matched).then(resolve);
-      });
+      LocalStore.set('matched', matched);
+    }
+  }, {
+    key: "theme",
+    get: function get() {
+      return LocalStore.get('theme', -1);
+    },
+    set: function set(theme) {
+      return LocalStore.set('theme', theme);
     }
   }, {
     key: "settings",
     get: function get() {
-      var _this = this;
-      return new Promise(function (resolve) {
-        Promise.all(keys.map(function (key) {
-          return _this[key];
-        })).then(function (values) {
-          var result = {};
-          keys.forEach(function (key, index) {
-            result[key] = values[index];
-          });
-          resolve(result);
-        });
-      });
+      var result = {};
+      for (var key in defaults) {
+        result[key] = this[key];
+      }
+      return result;
     }
   }]);
   return Settings;
 }();
 var DialogSettings = /*#__PURE__*/_createClass(function DialogSettings() {
-  var _this2 = this;
+  var _this = this;
   _classCallCheck(this, DialogSettings);
   _defineProperty(this, "element", void 0);
   _defineProperty(this, "dialog", void 0);
@@ -1884,17 +1294,19 @@ var DialogSettings = /*#__PURE__*/_createClass(function DialogSettings() {
       step: 1,
       value: 0
     }),
+    themeSelector = new ThemeSelector([-1, 1, 2, 3, 4], Settings.theme),
     form = createElement('<form action="#"/>', {
       onsubmit: function onsubmit(e) {
         e.preventDefault();
       }
-    }, [difficultyRange.element, timeoutRange.element, livesRange.element, matchedRange.element]),
+    }, [difficultyRange.element, timeoutRange.element, livesRange.element, matchedRange.element, themeSelector.element]),
     elements = {
       form: form,
       difficultyRange: difficultyRange,
       timeoutRange: timeoutRange,
       livesRange: livesRange,
-      matchedRange: matchedRange
+      matchedRange: matchedRange,
+      themeSelector: themeSelector
     };
   var changed = false,
     loaded = false;
@@ -1941,49 +1353,40 @@ var DialogSettings = /*#__PURE__*/_createClass(function DialogSettings() {
   });
 
   // load settings
-
-  Settings.settings.then(function (settings) {
-    for (var key in settings) {
-      var value = settings[key],
-        range = key + 'Range';
-      if (elements[range]) {
-        elements[range].value = value;
-      }
+  var settings = Settings.settings;
+  for (var key in settings) {
+    var value = settings[key],
+      range = key + 'Range';
+    if (elements[range]) {
+      elements[range].value = value;
     }
-    _this2.trigger('loaded', {
-      dialog: dialog,
-      settings: settings
-    });
-    form.addEventListener('change', function () {
-      changed = loaded;
-    });
+  }
+  this.trigger('loaded', {
+    dialog: dialog,
+    settings: settings
+  });
+  form.addEventListener('change', function () {
+    changed = loaded;
   });
   dialog.onSave(function (e) {
-    Promise.all(keys.map(function (key) {
-      var range = key + 'Range',
-        value;
-      if (elements[range]) {
-        value = elements[range].value;
+    for (var _key in defaults) {
+      var _range = _key + 'Range';
+      if (elements[_range]) {
+        Settings[_key] = elements[_range].value;
       }
-      console.debug(key, value);
-      return Settings[key] = value;
-    })).then(function (values) {
-      var settings = {};
-      keys.forEach(function (key, index) {
-        settings[key] = values[index];
-      });
-      if (changed) {
-        _this2.trigger('update', {
-          dialog: dialog,
-          settings: settings
-        });
-      }
-      _this2.trigger('save', {
+    }
+    Settings.theme = themeSelector.value;
+    if (changed) {
+      _this.trigger('update', {
         dialog: dialog,
-        settings: settings
+        settings: Settings
       });
-      changed = false;
+    }
+    _this.trigger('save', {
+      dialog: dialog,
+      settings: Settings
     });
+    changed = false;
   });
 });
 
@@ -2629,10 +2032,12 @@ var Deck = /*#__PURE__*/function () {
             });
             if (_this.pairs === _this.max) {
               _classPrivateFieldSet(_this, _complete, true);
-              _classPrivateFieldGet(_this, _elem).classList.add('complete');
               _this.trigger('complete', {
                 deck: _this
               });
+              setTimeout(function () {
+                _classPrivateFieldGet(_this, _elem).classList.add('complete');
+              }, 1700);
             } else {
               _this.disable(false);
             }
@@ -2658,11 +2063,11 @@ var Deck = /*#__PURE__*/function () {
     });
     this.on('gameover', function (e) {
       _classPrivateFieldSet(_this, _over, _classPrivateFieldSet(_this, _complete, true));
-      _classPrivateFieldGet(_this, _elem).classList.add('gameover');
-      //new game
-      //this.disable(false);
+      _this.disable(true);
+      setTimeout(function () {
+        _classPrivateFieldGet(_this, _elem).classList.add('gameover');
+      }, 1500);
     });
-
     this.trigger('displayed', {
       deck: this
     });
@@ -3057,10 +2462,8 @@ var Stats = /*#__PURE__*/function () {
         var _e$data$cards = _slicedToArray(e.data.cards, 2),
           one = _e$data$cards[0],
           two = _e$data$cards[1];
-        setTimeout(function () {
-          one.matched = true;
-          two.matched = true;
-        }, 2000);
+        one.matched = true;
+        two.matched = true;
       }
     });
     deck.on('gameover complete', function (e) {
@@ -3314,9 +2717,7 @@ var Game = /*#__PURE__*/function () {
       _this.deck.disable(false);
       _this.stats.timer.resume();
     });
-    Settings.settings.then(function (settings) {
-      return _this.start(settings);
-    });
+    this.start(Settings);
   }
   _createClass(Game, [{
     key: "destroy",
@@ -3331,9 +2732,11 @@ var Game = /*#__PURE__*/function () {
         this.destroy();
       }
       var difficulty = settings.difficulty,
+        theme = settings.theme,
         container = this.container;
       var deck = this.deck = Deck.generateGrid(difficulty),
         stats = this.stats = new Stats(deck, settings);
+      dataset(deck.element, 'theme', theme);
       container.appendChild(stats.element);
       container.appendChild(deck.element);
       deck.element.addEventListener('click', function (e) {
@@ -3373,10 +2776,9 @@ var Game = /*#__PURE__*/function () {
 _toConsumableArray(document.querySelectorAll('[data-toggle="tooltip"],[data-bs-toggle="tooltip"]')).map(function (el) {
   return new bootstrap.Tooltip(el);
 });
-console.debug(document.querySelectorAll('[data-toggle="tooltip"]'));
 var app = document.querySelector('#app'),
-  game = new Game(app),
-  settingsUI = new DialogSettings();
+  settingsUI = new DialogSettings(),
+  game = new Game(app);
 document.body.appendChild(settingsUI.element);
 settingsUI.on('update', function (e) {
   var settings = e.data.settings;
@@ -3386,7 +2788,6 @@ settingsUI.dialog.onShow(function (e) {
   game.pause();
 });
 settingsUI.dialog.onHidden(function (e) {
-  console.debug(e, game);
   game.resume();
 });
 //# sourceMappingURL=bundle.js.map

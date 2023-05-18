@@ -159,8 +159,6 @@ export class Deck {
                         one.disable();
                         two.disable();
 
-
-
                         this.trigger('success', {
                             deck: this,
                             cards: [one, two]
@@ -168,8 +166,12 @@ export class Deck {
 
                         if (this.pairs === this.max) {
                             this.#complete = true;
-                            this.#elem.classList.add('complete');
                             this.trigger('complete', { deck: this });
+
+                            setTimeout(() => {
+                                this.#elem.classList.add('complete');
+                            }, 1700);
+
                         } else {
                             this.disable(false);
                         }
@@ -201,9 +203,11 @@ export class Deck {
 
         this.on('gameover', e => {
             this.#over = this.#complete = true;
-            this.#elem.classList.add('gameover');
-            //new game
-            //this.disable(false);
+            this.disable(true);
+            setTimeout(() => {
+                this.#elem.classList.add('gameover');
+            }, 1500);
+
         });
 
         this.trigger('displayed', {

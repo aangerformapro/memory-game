@@ -122,12 +122,9 @@ export class Stats {
 
             } else if (settings.matched > 0) {
                 const [one, two] = e.data.cards;
-                setTimeout(() => {
-                    one.matched = true;
-                    two.matched = true;
-                }, 2000);
 
-
+                one.matched = true;
+                two.matched = true;
             }
 
         });

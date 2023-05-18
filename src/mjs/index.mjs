@@ -1,6 +1,6 @@
 
 import Game from "./components/game.mjs";
-import { DialogSettings, Settings } from "./components/settings.mjs";
+import { DialogSettings } from "./components/settings.mjs";
 
 
 /**
@@ -8,16 +8,15 @@ import { DialogSettings, Settings } from "./components/settings.mjs";
  */
 
 [...document.querySelectorAll('[data-toggle="tooltip"],[data-bs-toggle="tooltip"]')].map(el => new bootstrap.Tooltip(el));
-console.debug(document.querySelectorAll('[data-toggle="tooltip"]'));
+
 let
-    app = document.querySelector('#app'),
-    game = new Game(app), settingsUI = new DialogSettings();
+    app = document.querySelector('#app'), settingsUI = new DialogSettings(),
+    game = new Game(app);
 
 
 document.body.appendChild(settingsUI.element);
 
 settingsUI.on('update', e => {
-
     const { settings } = e.data;
     game.start(settings);
 });
@@ -28,7 +27,5 @@ settingsUI.dialog.onShow(e => {
 });
 
 settingsUI.dialog.onHidden(e => {
-
-    console.debug(e, game);
     game.resume();
 });

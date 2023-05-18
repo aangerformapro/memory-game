@@ -1,27 +1,23 @@
 import DataStore from './datastore.mjs';
-import { isString, isEmpty, isUndef, JSON } from '../utils.mjs';
-import { v4 as uuidv4 } from 'uuid';
+import { isString, isEmpty, isUndef, JSON, uuidv4, isNull } from '../utils.mjs';
 
-
-/**
- * Reads or generates UUID for Storage prefix
- * 
- * @returns String
- */
-function __UUID__() {
-    let
-        key = 'NGSOFT:WebStorage:UUID',
-        result = localStorage.getItem(key);
-    if (result === null) {
-        localStorage.setItem(key, result = uuidv4());
-    }
-    return result;
-}
 
 export class WebStorage extends DataStore {
 
     #storage
     #prefix
+
+    #generatePrefix() {
+
+        let
+            key = 'NGSOFT:WebStorage:UUID',
+            result = localStorage.getItem(key);
+
+        if (isNull(result)) {
+            localStorage.setItem(key, result = uuidv4());
+        }
+        return result;
+    }
 
     constructor(webstorage, prefix) {
         super();
@@ -33,18 +29,29 @@ export class WebStorage extends DataStore {
         }
 
         this.#storage = webstorage;
-        this.#prefix = prefix ??= __UUID__() + ':';
+        prefix ??= this.#generatePrefix();
+
+        if (!isEmpty(prefix) && !prefix.endsWith(':')) {
+            prefix += ':';
+        }
+
+        this.#prefix = prefix;
     }
 
 
-    async get(name, defaultValue = null) {
+    key(name) {
+        return this.#prefix + name;
+    }
+
+
+    get(name, defaultValue = null) {
 
         if (!isString(name) || isEmpty(name)) {
             throw new TypeError('name is not a non empty string');
         }
 
 
-        let value = this.#storage.getItem(this.#prefix + name);
+        let value = this.#storage.getItem(this.key(name));
 
         if (!isString(value)) {
             return defaultValue;
@@ -54,7 +61,7 @@ export class WebStorage extends DataStore {
     }
 
 
-    async set(name, value) {
+    set(name, value) {
         if (!isString(name) || isEmpty(name)) {
             throw new TypeError('name is not a non empty string');
         }
@@ -65,32 +72,23 @@ export class WebStorage extends DataStore {
 
 
         if (value === null) {
-            this.#storage.removeItem(this.#prefix + name);
+            this.#storage.removeItem(this.key(name));
         } else {
-            this.#storage.setItem(this.#prefix + name, JSON.stringify(value));
+            this.#storage.setItem(this.key(name), JSON.stringify(value));
         }
-
-
-        return { name, value };
     }
 
-    async clear() {
+    clear() {
 
-        let prefix = this.#prefix, store = this.#storage, promises = [], keys = [];
-
-
+        let prefix = this.#prefix, store = this.#storage;
         for (let i = 0; i < store.length; i++) {
-
             let name = store.key(i);
             if (name.indexOf(prefix) === 0 || isEmpty(prefix)) {
                 name = name.substring(prefix.length);
-                keys.push(name);
-                promises.push(this.remove(name));
+                this.remove(name);
             }
 
         }
-
-        return Promise.all(promises).then(() => keys);
     }
 
 
@@ -100,3 +98,6 @@ export class WebStorage extends DataStore {
 export const SessionStore = new WebStorage(sessionStorage), LocalStore = new WebStorage(localStorage);
 
 export default WebStorage;
+
+
+
