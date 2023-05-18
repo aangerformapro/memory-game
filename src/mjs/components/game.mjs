@@ -16,6 +16,14 @@ export class Game {
 
     #paused = false
 
+    #started = false
+
+    get paused() {
+        return this.#paused;
+    }
+    get started() {
+        return this.#started
+    }
 
 
     constructor(container) {
@@ -52,7 +60,7 @@ export class Game {
             this.destroy();
         }
 
-
+        this.#started = this.#paused = false;
 
         const { difficulty, theme } = settings, { container } = this;
         const
@@ -64,10 +72,27 @@ export class Game {
         container.appendChild(stats.element);
         container.appendChild(deck.element);
 
+        deck.one('flipped', e => {
+
+            this.#started = true;
+            this.trigger('start', {
+                game: this
+            })
+        });
+
+
+        deck.on('gameover complete', e => {
+            this.trigger(e.type + ' stop', { game: this });
+
+        });
+
+
         deck.element.addEventListener('click', e => {
 
             if (deck.isGameOver() || deck.complete) {
                 this.start(settings);
+            } else if (this.#paused) {
+                this.resume();
             }
 
         });
@@ -76,7 +101,8 @@ export class Game {
     }
 
     pause() {
-        if (!this.#paused) {
+
+        if (!this.#paused && this.#started) {
             this.#paused = true;
             this.trigger('pause', {
                 game: this

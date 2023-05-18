@@ -69,7 +69,7 @@ export class ThemeSelector {
             }
         }
 
-        return -1;
+        return null;
     }
 
     constructor(themes, value) {

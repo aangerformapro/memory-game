@@ -122,7 +122,7 @@ header {
   content: "pause";
   background-color: rgba(var(--bs-info-rgb), 1);
 }
-.memory-game-area.gameover, .memory-game-area.complete {
+.memory-game-area.gameover, .memory-game-area.complete, .memory-game-area.paused {
   pointer-events: auto !important;
   cursor: pointer;
 }
@@ -237,6 +237,12 @@ header {
     opacity: 0;
   }
 }
+[data-play=play] [data-play=paused],
+[data-play=paused] [data-play=play],
+[data-play=stopped] {
+  display: none;
+}
+
 [data-after]:after {
   content: attr(data-after);
 }

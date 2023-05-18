@@ -1185,7 +1185,7 @@ var ThemeSelector = /*#__PURE__*/function () {
       } finally {
         _iterator.f();
       }
-      return -1;
+      return null;
     }
   }]);
   return ThemeSelector;
@@ -2600,13 +2600,17 @@ var Clock = /*#__PURE__*/function () {
   }, {
     key: "pause",
     value: function pause() {
-      _classPrivateMethodGet(this, _update, _update2).call(this);
-      this.chrono.pause();
+      if (this.chrono.isStarted()) {
+        _classPrivateMethodGet(this, _update, _update2).call(this);
+        this.chrono.pause();
+      }
     }
   }, {
     key: "resume",
     value: function resume() {
-      this.chrono.resume();
+      if (this.chrono.isPaused()) {
+        this.chrono.resume();
+      }
     }
   }]);
   return Clock;
@@ -2691,6 +2695,7 @@ function _update4(ms) {
 }
 
 var _paused = /*#__PURE__*/new WeakMap();
+var _started = /*#__PURE__*/new WeakMap();
 var Game = /*#__PURE__*/function () {
   function Game(container) {
     var _this = this;
@@ -2699,6 +2704,10 @@ var Game = /*#__PURE__*/function () {
     _defineProperty(this, "stats", void 0);
     _defineProperty(this, "deck", void 0);
     _classPrivateFieldInitSpec(this, _paused, {
+      writable: true,
+      value: false
+    });
+    _classPrivateFieldInitSpec(this, _started, {
       writable: true,
       value: false
     });
@@ -2720,6 +2729,16 @@ var Game = /*#__PURE__*/function () {
     this.start(Settings);
   }
   _createClass(Game, [{
+    key: "paused",
+    get: function get() {
+      return _classPrivateFieldGet(this, _paused);
+    }
+  }, {
+    key: "started",
+    get: function get() {
+      return _classPrivateFieldGet(this, _started);
+    }
+  }, {
     key: "destroy",
     value: function destroy() {
       this.stats.destroy();
@@ -2731,6 +2750,7 @@ var Game = /*#__PURE__*/function () {
       if (this.stats) {
         this.destroy();
       }
+      _classPrivateFieldSet(this, _started, _classPrivateFieldSet(this, _paused, false));
       var difficulty = settings.difficulty,
         theme = settings.theme,
         container = this.container;
@@ -2739,16 +2759,29 @@ var Game = /*#__PURE__*/function () {
       dataset(deck.element, 'theme', theme);
       container.appendChild(stats.element);
       container.appendChild(deck.element);
+      deck.one('flipped', function (e) {
+        _classPrivateFieldSet(_this2, _started, true);
+        _this2.trigger('start', {
+          game: _this2
+        });
+      });
+      deck.on('gameover complete', function (e) {
+        _this2.trigger(e.type + ' stop', {
+          game: _this2
+        });
+      });
       deck.element.addEventListener('click', function (e) {
         if (deck.isGameOver() || deck.complete) {
           _this2.start(settings);
+        } else if (_classPrivateFieldGet(_this2, _paused)) {
+          _this2.resume();
         }
       });
     }
   }, {
     key: "pause",
     value: function pause() {
-      if (!_classPrivateFieldGet(this, _paused)) {
+      if (!_classPrivateFieldGet(this, _paused) && _classPrivateFieldGet(this, _started)) {
         _classPrivateFieldSet(this, _paused, true);
         this.trigger('pause', {
           game: this
@@ -2778,16 +2811,42 @@ _toConsumableArray(document.querySelectorAll('[data-toggle="tooltip"],[data-bs-t
 });
 var app = document.querySelector('#app'),
   settingsUI = new DialogSettings(),
-  game = new Game(app);
+  game = new Game(app),
+  playbtn = document.querySelector('#playbtn');
 document.body.appendChild(settingsUI.element);
 settingsUI.on('update', function (e) {
   var settings = e.data.settings;
   game.start(settings);
 });
 settingsUI.dialog.onShow(function (e) {
-  game.pause();
+  if (!game.paused) {
+    game.pause();
+  }
 });
-settingsUI.dialog.onHidden(function (e) {
-  game.resume();
+
+// settingsUI.dialog.onHidden(e => {
+//     if (paused) {
+//         paused = false;
+//         game.resume();
+//     }
+// });
+
+game.on('pause resume', function (e) {
+  var type = e.type;
+  dataset(playbtn, 'play', type === 'pause' ? "paused" : "play");
+}).on('gameover complete', function (e) {
+  dataset(playbtn, 'play', "stopped");
+}).on('start', function (e) {
+  dataset(playbtn, 'play', "play");
+});
+playbtn.addEventListener('click', function (e) {
+  e.preventDefault();
+  if (game.started) {
+    if (game.paused) {
+      game.resume();
+    } else {
+      game.pause();
+    }
+  }
 });
 //# sourceMappingURL=bundle.js.map

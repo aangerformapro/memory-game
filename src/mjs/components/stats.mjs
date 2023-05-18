@@ -275,15 +275,19 @@ export class Clock {
 
     pause() {
 
-
-        this.#update();
-        this.chrono.pause();
+        if (this.chrono.isStarted()) {
+            this.#update();
+            this.chrono.pause();
+        }
 
     }
 
 
     resume() {
-        this.chrono.resume();
+        if (this.chrono.isPaused()) {
+            this.chrono.resume();
+        }
+
     }
 }
 
