@@ -1,6 +1,6 @@
 
 import Game from "./components/game.mjs";
-import { DialogSettings } from "./components/settings.mjs";
+import Settings, { DialogSettings } from "./components/settings.mjs";
 import dataset from "./helpers/dataset.mjs";
 
 
@@ -19,25 +19,18 @@ document.body.appendChild(settingsUI.element);
 
 settingsUI.on('update', e => {
     const { settings } = e.data;
+
+    dataset(playbtn, 'play', "stopped");
     game.start(settings);
 });
 
 
 settingsUI.dialog.onShow(e => {
     if (!game.paused) {
-
         game.pause();
     }
 
 });
-
-// settingsUI.dialog.onHidden(e => {
-//     if (paused) {
-//         paused = false;
-//         game.resume();
-//     }
-// });
-
 
 game.on('pause resume', e => {
     const { type } = e;
@@ -59,3 +52,16 @@ playbtn.addEventListener('click', e => {
     }
 
 });
+
+
+function onResize() {
+    const { deck } = game, { height } = deck;
+    deck.width = Math.floor(height * 4 / 5);
+}
+
+
+addEventListener('resize', onResize);
+game.on('displayed', onResize);
+
+
+game.start(Settings);

@@ -2,7 +2,7 @@
 
 import dataset from "../helpers/dataset.mjs";
 import EventManager from "../helpers/event-manager.mjs";
-import { createElement, isInt } from "../helpers/utils.mjs";
+import { createElement, encode, isInt } from "../helpers/utils.mjs";
 import Card from "./card.mjs";
 import { iconNames } from "./icon.mjs";
 
@@ -63,6 +63,7 @@ export class Deck {
 
 
     #elem
+    #cardArea
     #flipped
     #cards
     #pairs = 0
@@ -108,6 +109,27 @@ export class Deck {
         return this.#cards.length;
     }
 
+
+    get width() {
+        return this.#cardArea.offsetWidth;
+    }
+
+
+    set width(width) {
+        this.#cardArea.style.maxWidth = encode(width) + 'px'
+    }
+
+
+    get height() {
+        return this.#cardArea.offsetHeight;
+    }
+
+    set height(height) {
+        this.#cardArea.style.height = encode(height) + 'px'
+    }
+
+
+
     disable(flag = true) {
 
         if (flag === true) {
@@ -129,7 +151,9 @@ export class Deck {
         this.#cards = [];
         this.#flipped = [];
         this.#pairs = 0;
-        this.#elem = createElement('div', { class: 'memory-game-area border border-top-0' });
+        this.#cardArea = createElement('div', { class: "card-area" });
+        this.#elem = createElement('div', { class: 'memory-game-area border border-top-0' }, this.#cardArea);
+
         EventManager.mixin(this);
         cards.forEach(card => this.push(card));
 
@@ -223,7 +247,7 @@ export class Deck {
 
         if (card instanceof Card) {
             this.#cards.push(card);
-            this.#elem.appendChild(card.element);
+            this.#cardArea.appendChild(card.element);
             card.on('flipped', e => {
                 this.trigger('flipped', e.data);
             });
@@ -241,8 +265,8 @@ export class Deck {
 
     shuffle() {
         this.#cards = shuffle(this.#cards);
-        this.#elem.innerHTML = '';
-        this.#cards.forEach(card => this.#elem.appendChild(card.element));
+        this.#cardArea.innerHTML = '';
+        this.#cards.forEach(card => this.#cardArea.appendChild(card.element));
         return this;
     }
 

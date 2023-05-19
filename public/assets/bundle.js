@@ -1946,6 +1946,7 @@ function _shuffle(list) {
   return result;
 }
 var _elem = /*#__PURE__*/new WeakMap();
+var _cardArea = /*#__PURE__*/new WeakMap();
 var _flipped = /*#__PURE__*/new WeakMap();
 var _cards = /*#__PURE__*/new WeakMap();
 var _pairs = /*#__PURE__*/new WeakMap();
@@ -1958,6 +1959,10 @@ var Deck = /*#__PURE__*/function () {
     var cards = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     _classCallCheck(this, Deck);
     _classPrivateFieldInitSpec(this, _elem, {
+      writable: true,
+      value: void 0
+    });
+    _classPrivateFieldInitSpec(this, _cardArea, {
       writable: true,
       value: void 0
     });
@@ -1988,9 +1993,12 @@ var Deck = /*#__PURE__*/function () {
     _classPrivateFieldSet(this, _cards, []);
     _classPrivateFieldSet(this, _flipped, []);
     _classPrivateFieldSet(this, _pairs, 0);
+    _classPrivateFieldSet(this, _cardArea, createElement('div', {
+      class: "card-area"
+    }));
     _classPrivateFieldSet(this, _elem, createElement('div', {
       class: 'memory-game-area border border-top-0'
-    }));
+    }, _classPrivateFieldGet(this, _cardArea)));
     EventManager.mixin(this);
     cards.forEach(function (card) {
       return _this.push(card);
@@ -2114,6 +2122,22 @@ var Deck = /*#__PURE__*/function () {
       return _classPrivateFieldGet(this, _cards).length;
     }
   }, {
+    key: "width",
+    get: function get() {
+      return _classPrivateFieldGet(this, _cardArea).offsetWidth;
+    },
+    set: function set(width) {
+      _classPrivateFieldGet(this, _cardArea).style.maxWidth = encode$1(width) + 'px';
+    }
+  }, {
+    key: "height",
+    get: function get() {
+      return _classPrivateFieldGet(this, _cardArea).offsetHeight;
+    },
+    set: function set(height) {
+      _classPrivateFieldGet(this, _cardArea).style.height = encode$1(height) + 'px';
+    }
+  }, {
     key: "disable",
     value: function disable() {
       var flag = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
@@ -2134,7 +2158,7 @@ var Deck = /*#__PURE__*/function () {
       var _this2 = this;
       if (card instanceof Card) {
         _classPrivateFieldGet(this, _cards).push(card);
-        _classPrivateFieldGet(this, _elem).appendChild(card.element);
+        _classPrivateFieldGet(this, _cardArea).appendChild(card.element);
         card.on('flipped', function (e) {
           _this2.trigger('flipped', e.data);
         });
@@ -2151,9 +2175,9 @@ var Deck = /*#__PURE__*/function () {
     value: function shuffle() {
       var _this3 = this;
       _classPrivateFieldSet(this, _cards, _shuffle(_classPrivateFieldGet(this, _cards)));
-      _classPrivateFieldGet(this, _elem).innerHTML = '';
+      _classPrivateFieldGet(this, _cardArea).innerHTML = '';
       _classPrivateFieldGet(this, _cards).forEach(function (card) {
-        return _classPrivateFieldGet(_this3, _elem).appendChild(card.element);
+        return _classPrivateFieldGet(_this3, _cardArea).appendChild(card.element);
       });
       return this;
     }
@@ -2726,7 +2750,8 @@ var Game = /*#__PURE__*/function () {
       _this.deck.disable(false);
       _this.stats.timer.resume();
     });
-    this.start(Settings);
+
+    // this.start(Settings);
   }
   _createClass(Game, [{
     key: "paused",
@@ -2742,6 +2767,9 @@ var Game = /*#__PURE__*/function () {
     key: "destroy",
     value: function destroy() {
       this.stats.destroy();
+      this.trigger('destroy', {
+        game: this
+      });
     }
   }, {
     key: "start",
@@ -2776,6 +2804,9 @@ var Game = /*#__PURE__*/function () {
         } else if (_classPrivateFieldGet(_this2, _paused)) {
           _this2.resume();
         }
+      });
+      this.trigger('displayed', {
+        game: this
       });
     }
   }, {
@@ -2816,6 +2847,7 @@ var app = document.querySelector('#app'),
 document.body.appendChild(settingsUI.element);
 settingsUI.on('update', function (e) {
   var settings = e.data.settings;
+  dataset(playbtn, 'play', "stopped");
   game.start(settings);
 });
 settingsUI.dialog.onShow(function (e) {
@@ -2823,14 +2855,6 @@ settingsUI.dialog.onShow(function (e) {
     game.pause();
   }
 });
-
-// settingsUI.dialog.onHidden(e => {
-//     if (paused) {
-//         paused = false;
-//         game.resume();
-//     }
-// });
-
 game.on('pause resume', function (e) {
   var type = e.type;
   dataset(playbtn, 'play', type === 'pause' ? "paused" : "play");
@@ -2849,4 +2873,12 @@ playbtn.addEventListener('click', function (e) {
     }
   }
 });
+function onResize() {
+  var deck = game.deck,
+    height = deck.height;
+  deck.width = Math.floor(height * 4 / 5);
+}
+addEventListener('resize', onResize);
+game.on('displayed', onResize);
+game.start(Settings);
 //# sourceMappingURL=bundle.js.map

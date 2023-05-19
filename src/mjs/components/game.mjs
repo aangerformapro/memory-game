@@ -47,11 +47,12 @@ export class Game {
             this.stats.timer.resume();
         });
 
-        this.start(Settings);
+        // this.start(Settings);
     }
 
     destroy() {
         this.stats.destroy();
+        this.trigger('destroy', { game: this });
     }
 
     start(settings) {
@@ -96,6 +97,10 @@ export class Game {
             }
 
         });
+
+
+
+        this.trigger('displayed', { game: this });
 
 
     }
