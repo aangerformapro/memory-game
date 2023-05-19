@@ -65,19 +65,20 @@ export class Stats {
         const
 
             tour = createElement('td', '0'),
-            pairs = createElement('td', '0'),
+            pairs = createElement('td', '0/' + deck.max),
             vies = createElement('td', '&infin;'),
             timer = this.timer = new Clock(),
 
             countdown = this.countdown = new CountDownClock(timer, settings.timeout * MINUTE),
 
             root = createElement('<table class="table table-fixed table-bordered text-center mb-0 game-stats">', [
-                '<thead><tr><th>Cartes</th><th>Tour</th><th>Paires</th><th>Vies</th><th>Timer</th></tr></thead>',
+                '<thead><tr><th>Tour</th><th>Paires</th><th>Cartes</th><th>Vies</th><th>Timer</th></tr></thead>',
                 createElement('tbody', [
                     createElement('tr', [
-                        createElement('td', encode(deck.length)),
+
                         tour,
                         pairs,
+                        createElement('td', encode(deck.length)),
                         vies,
                         createElement('td', timer.element),
 
@@ -107,7 +108,7 @@ export class Stats {
 
         deck.on('success failed', e => {
             this.tour = deck.flips;
-            this.pairs = deck.pairs;
+            this.pairs = deck.pairs + '/' + deck.max;
 
             if (e.type === 'failed') {
                 if (this.#vies === 0) {

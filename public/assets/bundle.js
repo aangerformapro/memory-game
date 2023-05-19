@@ -2427,11 +2427,11 @@ var Stats = /*#__PURE__*/function () {
     EventManager.mixin(this);
     _classPrivateFieldSet(this, _vies, settings.lives === 0 ? -1 : settings.lives);
     var tour = createElement('td', '0'),
-      pairs = createElement('td', '0'),
+      pairs = createElement('td', '0/' + deck.max),
       vies = createElement('td', '&infin;'),
       timer = this.timer = new Clock(),
       countdown = this.countdown = new CountDownClock(timer, settings.timeout * MINUTE),
-      root = createElement('<table class="table table-fixed table-bordered text-center mb-0 game-stats">', ['<thead><tr><th>Cartes</th><th>Tour</th><th>Paires</th><th>Vies</th><th>Timer</th></tr></thead>', createElement('tbody', [createElement('tr', [createElement('td', encode(deck.length)), tour, pairs, vies, createElement('td', timer.element)]), createElement('tr', [createElement('<td colspan="5"/>', countdown.element)])])]);
+      root = createElement('<table class="table table-fixed table-bordered text-center mb-0 game-stats">', ['<thead><tr><th>Tour</th><th>Paires</th><th>Cartes</th><th>Vies</th><th>Timer</th></tr></thead>', createElement('tbody', [createElement('tr', [tour, pairs, createElement('td', encode(deck.length)), vies, createElement('td', timer.element)]), createElement('tr', [createElement('<td colspan="5"/>', countdown.element)])])]);
     this.element = root;
     this.elements = {
       root: root,
@@ -2447,7 +2447,7 @@ var Stats = /*#__PURE__*/function () {
     });
     deck.on('success failed', function (e) {
       _this.tour = deck.flips;
-      _this.pairs = deck.pairs;
+      _this.pairs = deck.pairs + '/' + deck.max;
       if (e.type === 'failed') {
         if (_classPrivateFieldGet(_this, _vies) === 0) {
           deck.trigger('gameover');
