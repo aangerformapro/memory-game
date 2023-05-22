@@ -7,25 +7,21 @@ $theme3: #BFACB5;
 $theme4: #E5D0CC;
 
 
-body
-{
+body {
     font-family: 'Nova Square', cursive, sans-serif;
 }
 
-.disabled
-{
+.disabled {
     pointer-events: none !important;
 
 }
 
 
-header
-{
+header {
     height: 60px;
 }
 
-#app
-{
+#app {
     width: 100vw;
     //  max-width: 1024px;
     margin: 0 auto;
@@ -33,14 +29,12 @@ header
 
     overflow: hidden;
 
-    @include lg
-    {
+    @include lg {
         //width: 80vw;
     }
 }
 
-.memory-game-area
-{
+.memory-game-area {
     cursor: pointer;
     position: relative;
     margin: auto;
@@ -49,8 +43,7 @@ header
     height: calc(100vh - 190px);
 
 
-    .card-area
-    {
+    .card-area {
         width: 100%;
         height: 100%;
         display: flex;
@@ -58,72 +51,58 @@ header
         margin: 0 auto;
     }
 
-    .memory-card
-    {
+    .memory-card {
         background: #1C7CCC;
     }
 
 
-    .card-label
-    {
+    .card-label {
         font-size: .875rem;
     }
 
-    &[data-grid="2"]
-    {
-        .memory-card
-        {
+    &[data-grid="2"] {
+        .memory-card {
             font-size: 6rem;
             width: calc(50% - 10px);
             height: calc(50% - 10px);
         }
     }
 
-    &[data-grid="4"]
-    {
-        .memory-card
-        {
+    &[data-grid="4"] {
+        .memory-card {
             font-size: 5rem;
             width: calc(25% - 10px);
             height: calc(25% - 10px);
         }
     }
 
-    &[data-grid="6"]
-    {
-        .memory-card
-        {
+    &[data-grid="6"] {
+        .memory-card {
             font-size: 3rem;
             width: calc(16.66% - 10px);
             height: calc(16.66% - 10px);
 
-            .card-label
-            {
+            .card-label {
                 font-size: .675rem;
             }
         }
     }
 
-    &[data-grid="8"]
-    {
-        .memory-card
-        {
+    &[data-grid="8"] {
+        .memory-card {
             font-size: 2.5rem;
             width: calc(12.5% - 10px);
             height: calc(12.5% - 10px);
 
-            .front-face
-            {
+            .front-face {
                 justify-content: center;
             }
 
-            .card-label
-            {
+            .card-label {
                 display: none;
             }
 
-            @include md-down
-            {
+            @include md-down {
                 font-size: 1.5rem;
 
 
@@ -136,8 +115,7 @@ header
 
     &.complete::before,
     &.gameover::before,
-    &.paused::before
-    {
+    &.paused::before {
         display: block;
         position: absolute;
         top: 0;
@@ -152,8 +130,7 @@ header
 
     &.complete::after,
     &.gameover::after,
-    &.paused::after
-    {
+    &.paused::after {
         z-index: 4;
         position: absolute;
 
@@ -175,39 +152,33 @@ header
 
     }
 
-    &.gameover::before
-    {
+    &.gameover::before {
         background-color: rgba(var(--bs-danger-rgb), .3);
     }
 
 
-    &.gameover::after
-    {
+    &.gameover::after {
         content: 'game over';
         background-color: rgba(var(--bs-danger-rgb), 1);
 
     }
 
-    &.complete::before
-    {
+    &.complete::before {
         background-color: rgba(var(--bs-success-rgb), .3);
 
     }
 
 
-    &.complete::after
-    {
+    &.complete::after {
         content: 'nouvelle partie';
         background-color: rgba(var(--bs-success-rgb), 1);
     }
 
-    &.paused::before
-    {
+    &.paused::before {
         background-color: rgba(var(--bs-info-rgb), .3);
     }
 
-    &.paused::after
-    {
+    &.paused::after {
         content: 'pause';
         background-color: rgba(var(--bs-info-rgb), 1);
     }
@@ -215,15 +186,20 @@ header
 
     &.gameover,
     &.complete,
-    &.paused
-    {
+    &.paused {
         pointer-events: auto !important;
         cursor: pointer;
     }
+
+    &.failed:not(.paused) {
+        .card-area {
+            animation: deckBlinkRed .25s ease-in-out infinite;
+        }
+
+    }
 }
 
-.memory-card
-{
+.memory-card {
 
 
 
@@ -239,21 +215,18 @@ header
     border-radius: 5px;
 
 
-    &:active
-    {
+    &:active {
         transform: scale(0.97);
         transition: transform .2s;
     }
 
-    &.flip
-    {
+    &.flip {
         transform: rotateY(180deg);
     }
 
 
     .front-face,
-    .back-face
-    {
+    .back-face {
         width: 100%;
         height: 100%;
         padding: 20px;
@@ -265,8 +238,7 @@ header
     }
 
 
-    .front-face
-    {
+    .front-face {
         transform: rotateY(180deg);
 
         background-color: #ddd;
@@ -280,12 +252,10 @@ header
 
     }
 
-    &.matched
-    {
+    &.matched {
         box-shadow: none;
 
-        &::after
-        {
+        &::after {
             z-index: 2;
             animation: cardFadeOut .8s ease-in-out .5s reverse both;
             position: absolute;
@@ -302,17 +272,13 @@ header
 
 
 
-.theme-selector
-{
-    .color-picker
-    {
-        [type="radio"]
-        {
+.theme-selector {
+    .color-picker {
+        [type="radio"] {
             display: none;
         }
 
-        label
-        {
+        label {
             display: inline-block;
             width: 32px;
             height: 32px;
@@ -324,12 +290,10 @@ header
 
         }
 
-        :checked ~ label
-        {
+        :checked~label {
             border-color: rgba(0, 0, 0, .3);
 
-            &::after
-            {
+            &::after {
                 content: '✓';
                 font-size: 1.5rem;
                 font-weight: 700;
@@ -352,82 +316,86 @@ header
 
 
 [data-theme="1"] .memory-card,
-[for="theme1"]
-{
+[for="theme1"] {
     background: $theme1;
 }
 
 [data-theme="2"] .memory-card,
-[for="theme2"]
-{
+[for="theme2"] {
     background: $theme2;
 }
 
 [data-theme="3"] .memory-card,
-[for="theme3"]
-{
+[for="theme3"] {
     background: $theme3;
 }
 
 [data-theme="4"] .memory-card,
-[for="theme4"]
-{
+[for="theme4"] {
     background: $theme4;
 }
 
+@keyframes deckBlinkRed {
 
-@keyframes cardFadeOut
-{
-    0%
-    {
+    0% {
+        background-color: transparent;
+    }
+
+    25% {
+        background-color: rgba(var(--bs-danger-rgb), 1);
+    }
+
+    95% {
+        background-color: transparent;
+    }
+
+
+}
+
+
+
+@keyframes cardFadeOut {
+    0% {
         opacity: 1;
     }
 
-    100%
-    {
+    100% {
         opacity: 0;
     }
 }
 
 [data-play="play"] [data-play="paused"],
 [data-play="paused"] [data-play="play"],
-[data-play="stopped"]
-{
+[data-play="stopped"] {
     display: none;
 }
 
-[data-after]:after
-{
+[data-after]:after {
     content: attr(data-after);
 }
 
 
-[data-before]:before
-{
+[data-before]:before {
     content: attr(data-before);
 }
 
-.time
-{
+.time {
 
     user-select: none;
     width: 80px;
 
 
     .hours:empty,
-    .minutes:empty
-    {
+    .minutes:empty {
         margin: 0;
     }
 
-    .seconds:empty::after
-    {
+    .seconds:empty::after {
         content: '∞';
     }
 
-    .hours:not(:empty) + .minutes::before,
-    .minutes:not(:empty) + .seconds::before
-    {
+    .hours:not(:empty)+.minutes::before,
+    .minutes:not(:empty)+.seconds::before {
         content: ':';
         display: inline-block;
         margin: 0 2px;
@@ -436,12 +404,10 @@ header
 }
 
 
-.game-stats
-{
+.game-stats {
 
     td:not([colspan]),
-    th
-    {
+    th {
         width: calc(20% - 2px);
     }
 }

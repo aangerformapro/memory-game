@@ -124,6 +124,9 @@ header {
   pointer-events: auto !important;
   cursor: pointer;
 }
+.memory-game-area.failed:not(.paused) .card-area {
+  animation: deckBlinkRed 0.25s ease-in-out infinite;
+}
 
 .memory-card {
   margin: 5px;
@@ -227,6 +230,17 @@ header {
   background: #E5D0CC;
 }
 
+@keyframes deckBlinkRed {
+  0% {
+    background-color: transparent;
+  }
+  25% {
+    background-color: rgba(var(--bs-danger-rgb), 1);
+  }
+  95% {
+    background-color: transparent;
+  }
+}
 @keyframes cardFadeOut {
   0% {
     opacity: 1;

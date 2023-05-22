@@ -2066,7 +2066,9 @@ var Deck = /*#__PURE__*/function () {
       }
     });
     this.on('failed', function (e) {
+      _this.element.classList.add('failed');
       setTimeout(function () {
+        _this.element.classList.remove('failed');
         if (!_classPrivateFieldGet(_this, _over)) {
           e.data.cards.forEach(function (card) {
             return card.toggle();

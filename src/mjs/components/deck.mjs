@@ -221,7 +221,12 @@ export class Deck {
         });
 
         this.on('failed', e => {
+
+            this.element.classList.add('failed');
+
             setTimeout(() => {
+
+                this.element.classList.remove('failed');
                 if (!this.#over) {
                     e.data.cards.forEach(card => card.toggle());
                     this.disable(false);
