@@ -73,6 +73,11 @@ export class Deck {
     #over = false
     #complete = false
 
+
+    get attached() {
+        return this.#elem.closest('body') !== null;
+    }
+
     get grid() {
         return Math.sqrt(this.length);
     }

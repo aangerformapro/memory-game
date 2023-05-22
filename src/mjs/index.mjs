@@ -56,7 +56,12 @@ playbtn.addEventListener('click', e => {
 
 function onResize() {
     const { deck } = game, { height } = deck;
-    deck.width = Math.floor(height * 4 / 5);
+    deck.width = Math.floor(height * 3 / 4);
+    deck.forEach(card => {
+        let width = card.element.offsetWidth;
+        card.icon.element.style.fontSize = Math.floor(.6 * width) + 'px';
+        card.element.querySelector('.card-label').style.fontSize = Math.floor(.15 * width) + 'px';
+    });
 }
 
 

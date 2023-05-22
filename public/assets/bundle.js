@@ -1829,6 +1829,7 @@ var Card = /*#__PURE__*/function () {
       writable: true,
       value: void 0
     });
+    _defineProperty(this, "elements", void 0);
     if (isString(icon)) {
       icon = new Icon(icon);
     }
@@ -1856,6 +1857,11 @@ var Card = /*#__PURE__*/function () {
     });
   }
   _createClass(Card, [{
+    key: "attached",
+    get: function get() {
+      return _classPrivateFieldGet(this, _elem$1).closest('body') !== null;
+    }
+  }, {
     key: "element",
     get: function get() {
       return _classPrivateFieldGet(this, _elem$1);
@@ -2082,6 +2088,11 @@ var Deck = /*#__PURE__*/function () {
     dataset(_classPrivateFieldGet(this, _elem), 'grid', this.grid);
   }
   _createClass(Deck, [{
+    key: "attached",
+    get: function get() {
+      return _classPrivateFieldGet(this, _elem).closest('body') !== null;
+    }
+  }, {
     key: "grid",
     get: function get() {
       return Math.sqrt(this.length);
@@ -2876,7 +2887,12 @@ playbtn.addEventListener('click', function (e) {
 function onResize() {
   var deck = game.deck,
     height = deck.height;
-  deck.width = Math.floor(height * 4 / 5);
+  deck.width = Math.floor(height * 3 / 4);
+  deck.forEach(function (card) {
+    var width = card.element.offsetWidth;
+    card.icon.element.style.fontSize = Math.floor(.6 * width) + 'px';
+    card.element.querySelector('.card-label').style.fontSize = Math.floor(.15 * width) + 'px';
+  });
 }
 addEventListener('resize', onResize);
 game.on('displayed', onResize);

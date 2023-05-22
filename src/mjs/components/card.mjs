@@ -14,6 +14,10 @@ export class Card {
     #elem
 
 
+    get attached() {
+        return this.#elem.closest('body') !== null;
+    }
+
     get element() {
         return this.#elem;
     }
@@ -66,6 +70,9 @@ export class Card {
         this.#elem.style.order = num;
     }
 
+
+    elements
+
     constructor(icon) {
 
 
@@ -78,7 +85,9 @@ export class Card {
         }
 
         this.#icon = icon;
-        ;
+
+
+
         this.#elem = createElement('div', {
             class: 'memory-card',
 
@@ -102,6 +111,7 @@ export class Card {
         this.#elem.addEventListener('click', e => {
             this.toggle();
         });
+
     }
 
 
