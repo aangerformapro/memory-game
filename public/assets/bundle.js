@@ -2891,7 +2891,7 @@ function onResize() {
   deck.forEach(function (card) {
     var width = card.element.offsetWidth;
     card.icon.element.style.fontSize = Math.floor(.6 * width) + 'px';
-    card.element.querySelector('.card-label').style.fontSize = Math.floor(.15 * width) + 'px';
+    card.element.querySelector('.card-label').style.fontSize = Math.floor(.1 * width) + 'px';
   });
 }
 addEventListener('resize', onResize);
